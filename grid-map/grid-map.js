@@ -1,4 +1,6 @@
+var Grid = {};
 
+var
 
 /*
  * For grid squares to always be drawn in the same location, we need a constant reference point.
@@ -208,7 +210,8 @@ function initMap(div, center, zoom) {
   var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
   var osmAttrib = 'Map data © OpenStreetMap contributors';
   var osm = new L.TileLayer(osmUrl, {attribution: osmAttrib});
-  map = L.map('map', {maxZoom: 15, minZoom: 5});
+  map = L.map(div
+      , {maxZoom: 15, minZoom: 5});
   map.addLayer(osm);
 
   map.setView(center, zoom);
