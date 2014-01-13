@@ -238,15 +238,6 @@ var grid = (function() {
         * @param zoom The zoom level of the map.
         */
         initMap: function(div, center, zoom) {
-            console.log("initMap bearing " + bearing.NORTH);
-            console.log(rads(0));
-            console.log(rads(45));
-            console.log(rads(90));
-                console.log(rads(135));
-                    console.log(rads(180));
-                        console.log(rads(225));
-                            console.log(rads(270));
-                                console.log(rads(315));
             var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
             var osmAttrib = 'Map data © OpenStreetMap contributors';
             var osm = new L.TileLayer(osmUrl, {attribution: osmAttrib});
