@@ -219,7 +219,6 @@ var grid = (function() {
     updateGrid(getDistanceByZoom(zoom));
   }
 
-
   return {
     /**
      * Create a map with a grid layer.
