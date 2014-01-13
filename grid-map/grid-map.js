@@ -15,19 +15,25 @@ var grid = (function() {
     };
 
     /**
+     * The constant Pi.
+     * @type {number}
+     */
+    var PI = 3.14159265;
+
+    /**
      * Convenience bearings for getNextLatLng method. These values can be passed into the method
      * as the bearing parameter.
      * @type {{NORTH: number, NORTH_EAST: number, EAST: number, SOUTH_EAST: number, SOUTH: number, SOUTH_WEST: number, WEST: number, NORTH_WEST: number}}
      */
     var bearing = {
-        NORTH: 0,
-        NORTH_EAST: 0.7853981625,
-        EAST: 1.570796325,
-        SOUTH_EAST: 2.3561944875000003,
-        SOUTH: 3.14159265,
-        SOUTH_WEST: 3.9269908125000006,
-        WEST: 4.7123889750000005,
-        NORTH_WEST: 5.4977871375000005
+        NORTH: rads(0),
+        NORTH_EAST: rads(45),
+        EAST: rads(90),
+        SOUTH_EAST: rads(135),
+        SOUTH: rads(180),
+        SOUTH_WEST: rads(225),
+        WEST: rads(270),
+        NORTH_WEST: rads(315)
     };
 
     /**
@@ -36,11 +42,6 @@ var grid = (function() {
      */
     var RADIUS_OF_EARTH = 6371.0;
 
-    /**
-     * The constant Pi.
-     * @type {number}
-     */
-    var PI = 3.14159265;
 
     /**
      * Converts degrees to radians.
