@@ -26,7 +26,7 @@ var grid = (function() {
    * @type {{NORTH: number, NORTH_EAST: number, EAST: number, SOUTH_EAST: number, SOUTH: number, SOUTH_WEST: number, WEST: number, NORTH_WEST: number}}
    */
   var bearing = {
-    NORTH: rads(0),
+    NORTH: 0,
     NORTH_EAST: rads(45),
     EAST: rads(90),
     SOUTH_EAST: rads(135),
@@ -107,7 +107,7 @@ var grid = (function() {
 
     var paddedBounds = L.latLngBounds(boundsSW, boundsNE);
 
-    var lst = [];
+    var matrix = [];
     var row = [];
 
     var latLng;
@@ -130,9 +130,13 @@ var grid = (function() {
 
       lng = config.startPoint.lng;
 
-      lst.push(row);
+      if(row.length > 0) {
+        matrix.push(row);
+      }
     }
-    return lst;
+
+
+    return matrix;
   }
 
   /**
