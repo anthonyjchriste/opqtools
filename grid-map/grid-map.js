@@ -76,7 +76,7 @@ var grid = (function() {
      * The new latitude and longitude is calculated using the shortest path between two points over a great arc.
      * @param latDegrees The latitude in decimal degrees.
      * @param lngDegrees The longitude in decimal degrees.
-     * @param bearing Direction from the starting point to get to the new point in radians.
+     * @param bear Direction from the starting point to get to the new point in radians.
      * @param distance The distance from the starting point to the new point in km.
      * @returns {LatLng} A new LatLng object representing the new point in decimal degrees.
      */
@@ -138,7 +138,7 @@ var grid = (function() {
     /**
      * Swaps the latitude and longitude from a latLng object.
      * @param latLng The latLng to swap.
-     * @returns {*[]} Swapped latLng as an array.
+     * @returns {number[]} Swapped latLng as an array.
      */
     function swapLatLng(latLng) {
         return [latLng.lng, latLng.lat];
@@ -250,19 +250,19 @@ var grid = (function() {
 
             map.on('zoomend', onMapChange);
             map.on('dragend', onMapChange);
+        },
+
+        island: {
+            BIG_ISLAND: {latLng: L.latLng(19.609926, -155.484009), defaultZoom: 9},
+            KAUAI: {latLng: L.latLng(22.057244, -159.506378), defaultZoom: 11},
+            LANAI: {latLng: L.latLng(20.829093, -156.919785), defaultZoom: 12},
+            MAUI: {latLng: L.latLng(20.786128, -156.305237), defaultZoom: 10},
+            MOLOKAI: {latLng: L.latLng(21.121454, -156.996689), defaultZoom: 11},
+            OAHU: {latLng: L.latLng(21.466700, -157.983300), defaultZoom: 10}
         }
     };
 })();
 
-
-var Island = {
-  BIG_ISLAND: {latLng: L.latLng(19.609926, -155.484009), defaultZoom: 9},
-  KAUAI: {latLng: L.latLng(22.057244, -159.506378), defaultZoom: 11},
-  LANAI: {latLng: L.latLng(20.829093, -156.919785), defaultZoom: 12},
-  MAUI: {latLng: L.latLng(20.786128, -156.305237), defaultZoom: 10},
-  MOLOKAI: {latLng: L.latLng(21.121454, -156.996689), defaultZoom: 11},
-  OAHU: {latLng: L.latLng(21.466700, -157.983300), defaultZoom: 10}
-};
 
 
 
