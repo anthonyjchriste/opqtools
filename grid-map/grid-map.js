@@ -15,12 +15,6 @@ var grid = (function() {
   };
 
   /**
-   * The constant Pi.
-   * @type {number}
-   */
-  var PI = 3.14159265;
-
-  /**
    * Convenience bearings for getNextLatLng method. These values can be passed into the method
    * as the bearing parameter.
    * @type {{NORTH: number, NORTH_EAST: number, EAST: number, SOUTH_EAST: number, SOUTH: number, SOUTH_WEST: number, WEST: number, NORTH_WEST: number}}
@@ -49,7 +43,7 @@ var grid = (function() {
    * @returns {number} radians.
    */
   function rads(degs) {
-    return degs * (PI / 180);
+    return degs * (Math.PI / 180);
   }
 
   /**
@@ -58,7 +52,7 @@ var grid = (function() {
    * @returns {number} decimal degrees.
    */
   function degs(rads) {
-    return rads * (180 / PI);
+    return rads * (180 / Math.PI);
   }
 
   /**
@@ -98,46 +92,57 @@ var grid = (function() {
    * @returns {Array} - A 2d array where each row is a row of points in the grid.
    */
   function getGridPoints(bounds, distance) {
-    var lat = config.startPoint.lat;
-    var lng = config.startPoint.lng;
+    var paddedBounds = getPaddedBounds(bounds, distance * 2);
 
-    // Created a padded bounds so points lie just outside of the viewable map
-    var boundsSW = getNextLatLng(bounds.getSouth(), bounds.getWest(), bearing.SOUTH_WEST, distance * 2);
-    var boundsNE = getNextLatLng(bounds.getNorth(), bounds.getEast(), bearing.NORTH_EAST, distance * 2);
-
-    var paddedBounds = L.latLngBounds(boundsSW, boundsNE);
+    var pointRow = config.startPoint;//getNWPoint(config.startPoint, paddedBounds);
+    var pointCol;
 
     var matrix = [];
     var row = [];
 
-    var latLng;
-
-    // For each row in the grid
-    while (lat > paddedBounds.getSouth() && lat > config.endPoint.lat) {
+    while (pointRow.lat > paddedBounds.getSouth() && pointRow.lat > config.endPoint.lat) {
       row = [];
-      lat = getNextLatLng(lat, lng, bearing.SOUTH, distance).lat;
+      pointRow = getNextLatLng(pointRow.lat, pointRow.lng, bearing.SOUTH, distance);
+      pointCol = pointRow;
 
       // For each col in that row
-      while (lng < paddedBounds.getEast() && lng < config.endPoint.lng) {
-        lng = getNextLatLng(lat, lng, bearing.EAST, distance).lng;
-        latLng = L.latLng(lat, lng);
+      while (pointCol.lng < paddedBounds.getEast() && pointCol.lng < config.endPoint.lng) {
+        pointCol = getNextLatLng(pointCol.lat, pointCol.lng, bearing.EAST, distance);
 
         // If this point is visible on current map, save it
-        if (paddedBounds.contains(latLng)) {
-          row.push(latLng);
+        if (paddedBounds.contains(pointCol)) {
+          row.push(pointCol);
         }
       }
-
-      lng = config.startPoint.lng;
 
       if(row.length > 0) {
         matrix.push(row);
       }
     }
 
-
     return matrix;
   }
+
+  function getPaddedBounds(bounds, padding) {
+    var boundsSW = getNextLatLng(bounds.getSouth(), bounds.getWest(), bearing.SOUTH_WEST, padding);
+    var boundsNE = getNextLatLng(bounds.getNorth(), bounds.getEast(), bearing.NORTH_EAST, padding);
+    return L.latLngBounds(boundsSW, boundsNE);
+  }
+
+  function getNWPoint(latLng, bounds, distance) {
+    var newLatLng = latLng;
+
+    while(newLatLng.lng < bounds.getWest()) {
+      newLatLng = getNextLatLng(newLatLng.lat, newLatLng.lng, bearing.EAST, distance);
+    }
+
+    while(newLatLng.lat > bounds.getNorth()) {
+      newLatLng = getNextLatLng(newLatLng.lat, newLatLng.lng, bearing.SOUTH, distance);
+    }
+
+    return newLatLng;
+  }
+
 
   /**
    * Swaps the latitude and longitude from a latLng object.
@@ -184,7 +189,6 @@ var grid = (function() {
     if (map.hasLayer(gridLayer)) {
       map.removeLayer(gridLayer);
     }
-
 
     var points = getGridPoints(map.getBounds(), distance);
     var polys = getPolys(points);
