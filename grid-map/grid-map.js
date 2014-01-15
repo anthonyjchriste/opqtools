@@ -1,4 +1,5 @@
 var grid = (function() {
+  "use strict";
   var map;
   var gridLayer;
 
@@ -13,6 +14,24 @@ var grid = (function() {
     startPoint: L.latLng(24.029072, -162.312012),
     endPoint: L.latLng(17.619592, -151.853027)
   };
+
+  /**
+   * Converts degrees to radians.
+   * @param degs - Degrees (as decimal)
+   * @returns {number} radians.
+   */
+  function rads(degs) {
+    return degs * (Math.PI / 180);
+  }
+
+  /**
+   * Converts radians to decimal degrees.
+   * @param rads - Radians to convert.
+   * @returns {number} decimal degrees.
+   */
+  function degs(rads) {
+    return rads * (180 / Math.PI);
+  }
 
   /**
    * Convenience bearings for getNextLatLng method. These values can be passed into the method
@@ -38,24 +57,6 @@ var grid = (function() {
 
 
   /**
-   * Converts degrees to radians.
-   * @param degs - Degrees (as decimal)
-   * @returns {number} radians.
-   */
-  function rads(degs) {
-    return degs * (Math.PI / 180);
-  }
-
-  /**
-   * Converts radians to decimal degrees.
-   * @param rads - Radians to convert.
-   * @returns {number} decimal degrees.
-   */
-  function degs(rads) {
-    return rads * (180 / Math.PI);
-  }
-
-  /**
    * Converts distance to angular distance.
    * @param distance - Non-angular distance.
    * @returns {number} Angular distance.
@@ -79,7 +80,8 @@ var grid = (function() {
     var lng = rads(lngDegrees);
     var ad = getAngularDistance(distance);
     var newLat = Math.asin((Math.sin(lat) * Math.cos(ad)) + (Math.cos(lat) * Math.sin(ad) * Math.cos(bear)));
-    var newLng = lng + Math.atan2(Math.sin(bear) * Math.sin(ad) * Math.cos(lat), Math.cos(ad) - Math.sin(lat) * Math.sin(newLat));
+    var newLng = lng + Math.atan2(Math.sin(bear) * Math.sin(ad) * Math.cos(lat),
+      Math.cos(ad) - Math.sin(lat) * Math.sin(newLat));
     return L.latLng(degs(newLat), degs(newLng));
   }
 
@@ -220,15 +222,23 @@ var grid = (function() {
     switch (zoom) {
       case 5:
       case 6:
-      case 7:  return 128;
+      case 7:
+        return 128;
       case 8:
-      case 9:  return 64;
-      case 10: return 32
-      case 11: return 16;
-      case 12: return 8;
-      case 13: return 4;
-      case 14: return 2;
-      case 15: return 1;
+      case 9:
+        return 64;
+      case 10:
+        return 32;
+      case 11:
+        return 16;
+      case 12:
+        return 8;
+      case 13:
+        return 4;
+      case 14:
+        return 2;
+      case 15:
+        return 1;
     }
   }
 
@@ -236,7 +246,7 @@ var grid = (function() {
    * Get the current zoom level and update the grid.
    * @param e
    */
-  function onMapChange(e) {
+  function onMapChange() {
     var zoom = map.getZoom();
     updateGrid(getDistanceByZoom(zoom));
   }
@@ -249,8 +259,8 @@ var grid = (function() {
      * @param zoom The zoom level of the map.
      */
     initMap: function(div, center, zoom) {
-      var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-      var osmAttrib = 'Map data © OpenStreetMap contributors';
+      var osmUrl = "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+      var osmAttrib = "Map data © OpenStreetMap contributors";
       var osm = new L.TileLayer(osmUrl, {attribution: osmAttrib});
       map = L.map(div, {maxZoom: 15, minZoom: 5});
       map.addLayer(osm);
@@ -258,8 +268,8 @@ var grid = (function() {
       map.setView(center, zoom);
       updateGrid(getDistanceByZoom(zoom));
 
-      map.on('zoomend', onMapChange);
-      map.on('dragend', onMapChange);
+      map.on("zoomend", onMapChange);
+      map.on("dragend", onMapChange);
     },
 
     island: {
