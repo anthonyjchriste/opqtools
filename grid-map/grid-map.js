@@ -94,7 +94,8 @@ var grid = (function() {
   function getGridPoints(bounds, distance) {
     var paddedBounds = getPaddedBounds(bounds, distance * 2);
 
-    var pointRow = config.startPoint;//getNWPoint(config.startPoint, paddedBounds);
+    //var pointRow = config.startPoint;
+    var pointRow = getNWPoint(paddedBounds, distance);
     var pointCol;
 
     var matrix = [];
@@ -129,18 +130,18 @@ var grid = (function() {
     return L.latLngBounds(boundsSW, boundsNE);
   }
 
-  function getNWPoint(latLng, bounds, distance) {
-    var newLatLng = latLng;
+  function getNWPoint(bounds, distance) {
+    var point = config.startPoint;
 
-    while(newLatLng.lng < bounds.getWest()) {
-      newLatLng = getNextLatLng(newLatLng.lat, newLatLng.lng, bearing.EAST, distance);
+    while(point.lng < bounds.getWest() && point.lng < config.endPoint.lng) {
+      point = getNextLatLng(point.lat, point.lng, bearing.EAST, distance);
     }
 
-    while(newLatLng.lat > bounds.getNorth()) {
-      newLatLng = getNextLatLng(newLatLng.lat, newLatLng.lng, bearing.SOUTH, distance);
+    while(point.lat > bounds.getNorth() && point.at > config.endPoint.lat) {
+      point = getNextLatLng(point.lat, point.lng, bearing.SOUTH, distance);
     }
 
-    return newLatLng;
+    return point;
   }
 
 
