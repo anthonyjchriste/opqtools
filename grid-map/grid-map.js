@@ -91,10 +91,9 @@ var grid = (function() {
    * @param distance - The distance east and south and each point in the grid.
    * @returns {Array} - A 2d array where each row is a row of points in the grid.
    */
-  function getGridPoints(bounds, distance) {
-    var paddedBounds = getPaddedBounds(bounds, distance * 2);
+  function getGridPoints(distance) {
+    var paddedBounds = getPaddedBounds(map.getBounds(), distance * 2);
 
-    //var pointRow = config.startPoint;
     var pointRow = getNWPoint(paddedBounds, distance);
     var pointCol;
 
@@ -191,7 +190,7 @@ var grid = (function() {
       map.removeLayer(gridLayer);
     }
 
-    var points = getGridPoints(map.getBounds(), distance);
+    var points = getGridPoints(distance);
     var polys = getPolys(points);
     var grid = {"type": "MultiPolygon", "coordinates": [polys]};
 
