@@ -100,6 +100,7 @@ var grid = (function() {
     var matrix = [];
     var row = [];
 
+    // For each row of our grid
     while (pointRow.lat > paddedBounds.getSouth() && pointRow.lat > config.endPoint.lat) {
       row = [];
       pointRow = getNextLatLng(pointRow.lat, pointRow.lng, bearing.SOUTH, distance);
@@ -115,6 +116,7 @@ var grid = (function() {
         }
       }
 
+      // Don't add empty rows to the matrix
       if(row.length > 0) {
         matrix.push(row);
       }
@@ -123,12 +125,24 @@ var grid = (function() {
     return matrix;
   }
 
+  /**
+   * Given a bounding box, return a new padded bounding box.
+   * @param bounds - The bounding box to pad.
+   * @param padding - The amount of padding (in km) that will be added in each direction.
+   * @returns {*} - The padded ounding box.
+   */
   function getPaddedBounds(bounds, padding) {
     var boundsSW = getNextLatLng(bounds.getSouth(), bounds.getWest(), bearing.SOUTH_WEST, padding);
     var boundsNE = getNextLatLng(bounds.getNorth(), bounds.getEast(), bearing.NORTH_EAST, padding);
     return L.latLngBounds(boundsSW, boundsNE);
   }
 
+  /**
+   * Given a bounding box and distance scale, get the closest NW point that is within the bounding box.
+   * @param bounds - The bounding box to find the point inside.
+   * @param distance - The scale of the grid squares in km.
+   * @returns {latLng} - The first NW point inside the bounding box.
+   */
   function getNWPoint(bounds, distance) {
     var point = config.startPoint;
 
