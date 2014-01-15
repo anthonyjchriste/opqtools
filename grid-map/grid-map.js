@@ -92,7 +92,7 @@ var grid = (function() {
    * @returns {Array} - A 2d array where each row is a row of points in the grid.
    */
   function getGridPoints(distance) {
-    var paddedBounds = getPaddedBounds(map.getBounds(), distance * 2);
+    var paddedBounds = getPaddedBounds(map.getBounds(), distance * 4);
 
     var pointRow = getNWPoint(paddedBounds, distance);
     var pointCol;
