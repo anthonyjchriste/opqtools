@@ -242,6 +242,7 @@ var grid = (function() {
 
     for(var i = 0; i < polys.length; i++) {
       gridLayer.addData(polys[i]);
+    }
   }
 
   /**
