@@ -172,7 +172,7 @@ var grid = (function() {
   }
 
 
-  function getPoly(gridPoints, r, c) {
+  function getPoly(gridPoints, r, c, distance) {
     /**
      * Swaps the latitude and longitude from a latLng object.
      * @param latLng The latLng to swap.
@@ -187,7 +187,8 @@ var grid = (function() {
       properties: {
         r: r,
         c: c,
-        popupContent: r + " " + c
+        scale: distance,
+        popupContent: "row: " + r + "<br />col: " + c + "<br />scale: " + distance
       },
       geometry: {
         type: "Polygon",
@@ -209,7 +210,7 @@ var grid = (function() {
    * when creating a multi-polygon compared to the rest of the leaflet api.
    * @param gridPoints
    */
-  function getPolys(gridPoints) {
+  function getPolys(gridPoints, distance) {
     var polys = [];
 
     // For each point in the grid
@@ -218,7 +219,7 @@ var grid = (function() {
 
         // If a square polygon can be made from the current point, make it
         if (r + 1 < gridPoints.length - 1 && c + 1 < gridPoints[r].length - 1) {
-          polys.push(getPoly(gridPoints, r, c));
+          polys.push(getPoly(gridPoints, r, c, distance));
         }
       }
     }
@@ -234,15 +235,18 @@ var grid = (function() {
       map.removeLayer(gridLayer);
     }
 
-    var points = getGridPoints(distance);
-    var polys = getPolys(points);
-    //var grid = {"type": "MultiPolygon", "scale": distance, "coordinates": [polys]};
-
-    gridLayer = L.geoJson().addTo(map);
-
-    for(var i = 0; i < polys.length; i++) {
-      gridLayer.addData(polys[i]);
+    function onEachFeature(feature, layer) {
+      if(feature.properties && feature.properties.popupContent) {
+        layer.bindPopup(feature.properties.popupContent);
+      }
     }
+
+    var points = getGridPoints(distance);
+    var polys = getPolys(points, distance);
+
+    gridLayer = L.geoJson(polys, {
+      onEachFeature: onEachFeature
+    }).addTo(map);
   }
 
   /**
