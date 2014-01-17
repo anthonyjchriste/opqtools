@@ -86,18 +86,61 @@ var grid = (function() {
   }
 
   /**
+   * Given a bounding box, return a new padded bounding box.
+   * @param bounds - The bounding box to pad.
+   * @param padding - The amount of padding (in km) that will be added in each direction.
+   * @returns {*} - The padded ounding box.
+   */
+  function getPaddedBounds(bounds, padding) {
+    var boundsSW = getNextLatLng(bounds.getSouth(), bounds.getWest(), bearing.SOUTH_WEST, padding);
+    var boundsNE = getNextLatLng(bounds.getNorth(), bounds.getEast(), bearing.NORTH_EAST, padding);
+    return L.latLngBounds(boundsSW, boundsNE);
+  }
+
+  function getAnnotatedPoint(r, c, point) {
+    return {r: r, c: c, point: point};
+  }
+
+  /**
+   * Given a bounding box and distance scale, get the closest NW point that is within the bounding box.
+   * @param bounds - The bounding box to find the point inside.
+   * @param distance - The scale of the grid squares in km.
+   * @returns {latLng} - The first NW point inside the bounding box.
+   */
+  function getNWPoint(bounds, distance) {
+    var point = config.startPoint;
+    var r = 0;
+    var c = 0;
+
+    while(point.lng < bounds.getWest() && point.lng < config.endPoint.lng) {
+      point = getNextLatLng(point.lat, point.lng, bearing.EAST, distance);
+      r++;
+    }
+
+    while(point.lat > bounds.getNorth() && point.lat > config.endPoint.lat) {
+      point = getNextLatLng(point.lat, point.lng, bearing.SOUTH, distance);
+      c++;
+    }
+
+    return getAnnotatedPoint(r, c, point);
+  }
+
+  /**
    * Returns a matrix of points representing the corners of each square in our grid.
    * Points are only saved if they are just outside of the bounding box determined by
    * the current viewable area of the map.
-   * @param bounds - The bounding box to generate points in.
    * @param distance - The distance east and south and each point in the grid.
    * @returns {Array} - A 2d array where each row is a row of points in the grid.
    */
   function getGridPoints(distance) {
     var paddedBounds = getPaddedBounds(map.getBounds(), distance * 4);
 
-    var pointRow = getNWPoint(paddedBounds, distance);
+    var nwPoint = getNWPoint(paddedBounds, distance);
+    var pointRow = nwPoint.point;
     var pointCol;
+
+    var r = nwPoint.r;
+    var c = nwPoint.c;
 
     var matrix = [];
     var row = [];
@@ -107,14 +150,15 @@ var grid = (function() {
       row = [];
       pointRow = getNextLatLng(pointRow.lat, pointRow.lng, bearing.SOUTH, distance);
       pointCol = pointRow;
+      r++;
 
       // For each col in that row
       while (pointCol.lng < paddedBounds.getEast() && pointCol.lng < config.endPoint.lng) {
         pointCol = getNextLatLng(pointCol.lat, pointCol.lng, bearing.EAST, distance);
-
+        c++;
         // If this point is visible on current map, save it
         if (paddedBounds.contains(pointCol)) {
-          row.push(pointCol);
+          row.push(getAnnotatedPoint(r, c, pointCol));
         }
       }
 
@@ -127,48 +171,37 @@ var grid = (function() {
     return matrix;
   }
 
-  /**
-   * Given a bounding box, return a new padded bounding box.
-   * @param bounds - The bounding box to pad.
-   * @param padding - The amount of padding (in km) that will be added in each direction.
-   * @returns {*} - The padded ounding box.
-   */
-  function getPaddedBounds(bounds, padding) {
-    var boundsSW = getNextLatLng(bounds.getSouth(), bounds.getWest(), bearing.SOUTH_WEST, padding);
-    var boundsNE = getNextLatLng(bounds.getNorth(), bounds.getEast(), bearing.NORTH_EAST, padding);
-    return L.latLngBounds(boundsSW, boundsNE);
-  }
 
-  /**
-   * Given a bounding box and distance scale, get the closest NW point that is within the bounding box.
-   * @param bounds - The bounding box to find the point inside.
-   * @param distance - The scale of the grid squares in km.
-   * @returns {latLng} - The first NW point inside the bounding box.
-   */
-  function getNWPoint(bounds, distance) {
-    var point = config.startPoint;
-
-    while(point.lng < bounds.getWest() && point.lng < config.endPoint.lng) {
-      point = getNextLatLng(point.lat, point.lng, bearing.EAST, distance);
+  function getPoly(gridPoints, r, c) {
+    /**
+     * Swaps the latitude and longitude from a latLng object.
+     * @param latLng The latLng to swap.
+     * @returns {number[]} Swapped latLng as an array.
+     */
+    function swapLatLng(latLng) {
+      return [latLng.lng, latLng.lat];
     }
 
-    while(point.lat > bounds.getNorth() && point.at > config.endPoint.lat) {
-      point = getNextLatLng(point.lat, point.lng, bearing.SOUTH, distance);
+    var feature = {
+      type: "Feature",
+      properties: {
+        r: r,
+        c: c,
+        popupContent: r + " " + c
+      },
+      geometry: {
+        type: "Polygon",
+        coordinates: [[
+          swapLatLng(gridPoints[r][c].point),
+          swapLatLng(gridPoints[r + 1][c].point),
+          swapLatLng(gridPoints[r + 1][c + 1].point),
+          swapLatLng(gridPoints[r][c + 1].point)
+        ]]
+      }
     }
 
-    return point;
+    return feature;
   }
-
-
-  /**
-   * Swaps the latitude and longitude from a latLng object.
-   * @param latLng The latLng to swap.
-   * @returns {number[]} Swapped latLng as an array.
-   */
-  function swapLatLng(latLng) {
-    return [latLng.lng, latLng.lat];
-  }
-
 
   /**
    * Points are stored for each polygon in the following order: NW, SW, SE, NE.
@@ -185,12 +218,7 @@ var grid = (function() {
 
         // If a square polygon can be made from the current point, make it
         if (r + 1 < gridPoints.length - 1 && c + 1 < gridPoints[r].length - 1) {
-          polys.push([
-            swapLatLng(gridPoints[r][c]),
-            swapLatLng(gridPoints[r + 1][c]),
-            swapLatLng(gridPoints[r + 1][c + 1]),
-            swapLatLng(gridPoints[r][c + 1])
-          ]);
+          polys.push(getPoly(gridPoints, r, c));
         }
       }
     }
@@ -208,9 +236,12 @@ var grid = (function() {
 
     var points = getGridPoints(distance);
     var polys = getPolys(points);
-    var grid = {"type": "MultiPolygon", "coordinates": [polys]};
+    //var grid = {"type": "MultiPolygon", "scale": distance, "coordinates": [polys]};
 
-    gridLayer = L.geoJson(grid).addTo(map);
+    gridLayer = L.geoJson().addTo(map);
+
+    for(var i = 0; i < polys.length; i++) {
+      gridLayer.addData(polys[i]);
   }
 
   /**
@@ -244,7 +275,6 @@ var grid = (function() {
 
   /**
    * Get the current zoom level and update the grid.
-   * @param e
    */
   function onMapChange() {
     var zoom = map.getZoom();
