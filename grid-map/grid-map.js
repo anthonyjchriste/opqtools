@@ -12,7 +12,9 @@ var grid = (function() {
    */
   var config = {
     startPoint: L.latLng(24.029072, -162.312012),
-    endPoint: L.latLng(17.619592, -151.853027)
+    endPoint: L.latLng(17.619592, -151.853027),
+    maxZoom: 15,
+    minZoom: 5
   };
 
   /**
@@ -182,13 +184,16 @@ var grid = (function() {
       return [latLng.lng, latLng.lat];
     }
 
+    var row = gridPoints[r][c].r;
+    var col = gridPoints[r][c].c;
+
     var feature = {
       type: "Feature",
       properties: {
-        r: r,
-        c: c,
+        row: row,
+        col: col,
         scale: distance,
-        popupContent: "row: " + r + "<br />col: " + c + "<br />scale: " + distance
+        popupContent: "row: " + row + "<br />col: " + col + "<br />scale: " + distance
       },
       geometry: {
         type: "Polygon",
@@ -297,7 +302,7 @@ var grid = (function() {
       var osmUrl = "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
       var osmAttrib = "Map data © OpenStreetMap contributors";
       var osm = new L.TileLayer(osmUrl, {attribution: osmAttrib});
-      map = L.map(div, {maxZoom: 15, minZoom: 5});
+      map = L.map(div, {maxZoom: config.maxZoom, minZoom: config.minZoom});
       map.addLayer(osm);
 
       map.setView(center, zoom);
@@ -308,12 +313,30 @@ var grid = (function() {
     },
 
     island: {
-      BIG_ISLAND: {latLng: L.latLng(19.609926, -155.484009), defaultZoom: 9},
-      KAUAI: {latLng: L.latLng(22.057244, -159.506378), defaultZoom: 11},
-      LANAI: {latLng: L.latLng(20.829093, -156.919785), defaultZoom: 12},
-      MAUI: {latLng: L.latLng(20.786128, -156.305237), defaultZoom: 10},
-      MOLOKAI: {latLng: L.latLng(21.121454, -156.996689), defaultZoom: 11},
-      OAHU: {latLng: L.latLng(21.466700, -157.983300), defaultZoom: 10}
+      BIG_ISLAND: {
+        latLng: L.latLng(19.609926, -155.484009),
+        defaultZoom: 9
+      },
+      KAUAI: {
+        latLng: L.latLng(22.057244, -159.506378),
+        defaultZoom: 11
+      },
+      LANAI: {
+        latLng: L.latLng(20.829093, -156.919785),
+        defaultZoom: 12
+      },
+      MAUI: {
+        latLng: L.latLng(20.786128, -156.305237),
+        defaultZoom: 10
+      },
+      MOLOKAI: {
+        latLng: L.latLng(21.121454, -156.996689),
+        defaultZoom: 11
+      },
+      OAHU: {
+        latLng: L.latLng(21.466700, -157.983300),
+        defaultZoom: 10
+      }
     }
   };
 })();
