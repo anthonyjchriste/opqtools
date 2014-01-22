@@ -124,8 +124,6 @@ var grid = (function() {
       r++;
     }
 
-    console.log(r, c);
-
     return getAnnotatedPoint(r, c, point);
   }
 
