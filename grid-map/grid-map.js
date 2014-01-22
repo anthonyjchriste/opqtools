@@ -32,7 +32,7 @@ var grid = (function() {
   var config = {
     startPoint: L.latLng(24.029072, -162.312012),
     endPoint: L.latLng(17.619592, -151.853027),
-    maxZoom: 15,
+    maxZoom: 17,
     minZoom: 5
   };
 
@@ -270,6 +270,10 @@ var grid = (function() {
     return polys;
   }
 
+  function getGridSquareId(r, c, scale) {
+
+  }
+
   /**
    * Redraw the grid.
    * @param distance - The length of the side of each square in the grid.
@@ -319,6 +323,10 @@ var grid = (function() {
         return 2;
       case 15:
         return 1;
+      case 16:
+        return 0.5;
+      case 17:
+        return 0.25;
     }
   }
 
