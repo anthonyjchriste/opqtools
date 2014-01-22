@@ -116,13 +116,15 @@ var grid = (function() {
 
     while(point.lng < bounds.getWest() && point.lng < config.endPoint.lng) {
       point = getNextLatLng(point.lat, point.lng, bearing.EAST, distance);
-      r++;
+      c++;
     }
 
     while(point.lat > bounds.getNorth() && point.lat > config.endPoint.lat) {
       point = getNextLatLng(point.lat, point.lng, bearing.SOUTH, distance);
-      c++;
+      r++;
     }
+
+    console.log(r, c);
 
     return getAnnotatedPoint(r, c, point);
   }
@@ -153,6 +155,9 @@ var grid = (function() {
       pointRow = getNextLatLng(pointRow.lat, pointRow.lng, bearing.SOUTH, distance);
       pointCol = pointRow;
       r++;
+
+      // Reset the column index
+      c = nwPoint.c;
 
       // For each col in that row
       while (pointCol.lng < paddedBounds.getEast() && pointCol.lng < config.endPoint.lng) {
