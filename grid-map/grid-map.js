@@ -1,3 +1,22 @@
+/*
+ This file is part of opq-tools.
+
+ opa-tools is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ opa-tools is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with opq-tools. If not, see <http://www.gnu.org/licenses/>.
+
+ Copyright 2014 Anthony Christe
+ */
+
 var grid = (function() {
   "use strict";
   var map;
@@ -99,6 +118,13 @@ var grid = (function() {
     return L.latLngBounds(boundsSW, boundsNE);
   }
 
+  /**
+   * Returns an object that contains a point, plus the row and col of the point.
+   * @param r - Row of the point.
+   * @param c - Col of point.
+   * @param point
+   * @returns {{r: Number, c: Number, point: *}}
+   */
   function getAnnotatedPoint(r, c, point) {
     return {r: r, c: c, point: point};
   }
@@ -107,7 +133,7 @@ var grid = (function() {
    * Given a bounding box and distance scale, get the closest NW point that is within the bounding box.
    * @param bounds - The bounding box to find the point inside.
    * @param distance - The scale of the grid squares in km.
-   * @returns {latLng} - The first NW point inside the bounding box.
+   * @returns {*} - The first NW point inside the bounding box, plus its row and col.
    */
   function getNWPoint(bounds, distance) {
     var point = config.startPoint;
@@ -135,8 +161,10 @@ var grid = (function() {
    * @returns {Array} - A 2d array where each row is a row of points in the grid.
    */
   function getGridPoints(distance) {
+    // Pad the bounding box so that grid stops just off of screen
     var paddedBounds = getPaddedBounds(map.getBounds(), distance * 4);
 
+    // Find the closest point just NW of our BB
     var nwPoint = getNWPoint(paddedBounds, distance);
     var pointRow = nwPoint.point;
     var pointCol;
@@ -177,6 +205,14 @@ var grid = (function() {
   }
 
 
+  /**
+   * Creates a polygon given a set of points, a starting point, and the distance between points.
+   * @param gridPoints - The matrix of points.
+   * @param r - The upper left row of the polygon.
+   * @param c = The upper left column of the polygon.
+   * @param distance - The distance between points.
+   * @returns {{type: string, properties: {row: (*|Number), col: (*|Number), scale: *, popupContent: string}, geometry: {type: string, coordinates: *[]}}}
+   */
   function getPoly(gridPoints, r, c, distance) {
     /**
      * Swaps the latitude and longitude from a latLng object.
