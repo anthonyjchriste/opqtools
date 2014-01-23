@@ -180,7 +180,6 @@ var grid = (function() {
       row = [];
       pointRow = getNextLatLng(pointRow.lat, pointRow.lng, bearing.SOUTH, distance);
       pointCol = pointRow;
-      r++;
 
       // Reset the column index
       c = nwPoint.c;
@@ -188,12 +187,13 @@ var grid = (function() {
       // For each col in that row
       while (pointCol.lng < paddedBounds.getEast() && pointCol.lng < config.endPoint.lng) {
         pointCol = getNextLatLng(pointCol.lat, pointCol.lng, bearing.EAST, distance);
-        c++;
         // If this point is visible on current map, save it
         if (paddedBounds.contains(pointCol)) {
           row.push(getAnnotatedPoint(r, c, pointCol));
         }
+        c++;
       }
+      r++;
 
       // Don't add empty rows to the matrix
       if(row.length > 0) {
@@ -359,6 +359,9 @@ var grid = (function() {
       map.on("dragend", onMapChange);
     },
 
+    /**
+     * Convienience object allowing us to center the map over any of the following Hawaiian islands.
+     */
     island: {
       BIG_ISLAND: {
         latLng: L.latLng(19.609926, -155.484009),
