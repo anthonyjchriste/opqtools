@@ -32,7 +32,7 @@ var grid = (function() {
   var config = {
     startPoint: L.latLng(24.029072, -162.312012),
     endPoint: L.latLng(17.619592, -151.853027),
-    maxZoom: 17,
+    maxZoom: 18,
     minZoom: 5
   };
 
@@ -205,6 +205,13 @@ var grid = (function() {
   }
 
 
+  function getGridSquareId(r, c, scale) {
+    if(scale === 128) {
+      return r + "," + c + ":";
+    }
+    return "fuck you";
+  }
+
   /**
    * Creates a polygon given a set of points, a starting point, and the distance between points.
    * @param gridPoints - The matrix of points.
@@ -225,6 +232,7 @@ var grid = (function() {
 
     var row = gridPoints[r][c].r;
     var col = gridPoints[r][c].c;
+    var id = getGridSquareId(row, col, distance);
 
     var feature = {
       type: "Feature",
@@ -232,7 +240,11 @@ var grid = (function() {
         row: row,
         col: col,
         scale: distance,
-        popupContent: "row: " + row + "<br />col: " + col + "<br />scale: " + distance
+        id: id,
+        popupContent: "row: " + row +
+          "<br />col: " + col +
+          "<br />scale: " + distance +
+          "<br />id: " + id
       },
       geometry: {
         type: "Polygon",
@@ -268,10 +280,6 @@ var grid = (function() {
       }
     }
     return polys;
-  }
-
-  function getGridSquareId(r, c, scale) {
-
   }
 
   /**
@@ -327,6 +335,8 @@ var grid = (function() {
         return 0.5;
       case 17:
         return 0.25;
+      case 18:
+        return 0.125;
     }
   }
 
