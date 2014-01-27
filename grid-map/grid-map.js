@@ -210,20 +210,20 @@ var grid = (function () {
             return r + "," + c + ":" + id;
         }
 
-        var colLeft = c % 2 == 0;
-        var rowTop = r % 2 == 0;
+        var left = (c % 2) === 0;
+        var top = (r % 2) === 0;
         var idPart;
 
-        if(colLeft && rowTop) {
+        if(left && top) {
             idPart = "0";
         }
-        if(!colLeft && rowTop) {
+        if(!left && top) {
             idPart = "1";
         }
-        if(!colLeft && !rowTop) {
+        if(!left && !top) {
             idPart = "2";
         }
-        if(colLeft && !rowTop) {
+        if(left && !top) {
             idPart = "3";
         }
 
@@ -276,7 +276,7 @@ var grid = (function () {
                     ]
                 ]
             }
-        }
+        };
 
         return feature;
     }
