@@ -30,11 +30,21 @@ var grid = (function () {
      * @type {{startPoint: latLng, endPoint: latLng}}
      */
     var config = {
-        startPoint: L.latLng(24.029072, -162.312012),
-        endPoint: L.latLng(17.619592, -151.853027),
+        startPoint: L.latLng(22.534353, -161.004639),
+        endPoint: L.latLng(16.719592, -151.853027),
         maxZoom: 18,
         minZoom: 5
     };
+
+    /**
+     * Draws a small circle on the map which can be used in debugging.
+     * @param latLng - The latitude and longitude to place the point.
+     * @param color - The color of the point.
+     */
+    function addDebugPoint(latLng, color) {
+        color = color || 'red';
+        var debugPoint = L.circle(latLng, 500, {color: color}).addTo(map);
+    }
 
     /**
      * Converts degrees to radians.
@@ -178,7 +188,6 @@ var grid = (function () {
         // For each row of our grid
         while (pointRow.lat > paddedBounds.getSouth() && pointRow.lat > config.endPoint.lat) {
             row = [];
-            pointRow = getNextLatLng(pointRow.lat, pointRow.lng, bearing.SOUTH, distance);
             pointCol = pointRow;
 
             // Reset the column index
@@ -186,13 +195,14 @@ var grid = (function () {
 
             // For each col in that row
             while (pointCol.lng < paddedBounds.getEast() && pointCol.lng < config.endPoint.lng) {
-                pointCol = getNextLatLng(pointCol.lat, pointCol.lng, bearing.EAST, distance);
                 // If this point is visible on current map, save it
                 if (paddedBounds.contains(pointCol)) {
                     row.push(getAnnotatedPoint(r, c, pointCol));
                 }
+                pointCol = getNextLatLng(pointCol.lat, pointCol.lng, bearing.EAST, distance);
                 c++;
             }
+            pointRow = getNextLatLng(pointRow.lat, pointRow.lng, bearing.SOUTH, distance);
             r++;
 
             // Don't add empty rows to the matrix
@@ -205,7 +215,17 @@ var grid = (function () {
     }
 
 
+    /**
+     * Calculates the hierarchical id of a grid square.
+     * @param r The row of the grid square.
+     * @param c The col of the grid square.
+     * @param scale The length of each grid square.
+     * @param id The field is used in the recursive call to build the id string.
+     * @returns {*} The formatted id for this grid square.
+     */
     function getGridSquareId(r, c, scale, id) {
+        id = id || "";
+
         if (scale === 128) {
             return r + "," + c + ":" + id;
         }
@@ -214,16 +234,16 @@ var grid = (function () {
         var top = (r % 2) === 0;
         var idPart;
 
-        if(left && top) {
+        if (left && top) {
             idPart = "0";
         }
-        if(!left && top) {
+        if (!left && top) {
             idPart = "1";
         }
-        if(!left && !top) {
+        if (!left && !top) {
             idPart = "2";
         }
-        if(left && !top) {
+        if (left && !top) {
             idPart = "3";
         }
 
@@ -237,7 +257,8 @@ var grid = (function () {
      * @param r - The upper left row of the polygon.
      * @param c = The upper left column of the polygon.
      * @param distance - The distance between points.
-     * @returns {{type: string, properties: {row: (*|Number), col: (*|Number), scale: *, popupContent: string}, geometry: {type: string, coordinates: *[]}}}
+     * @returns {{type: string, properties: {row: (*|Number), col: (*|Number), scale: *, popupContent: string},
+   * geometry: {type: string, coordinates: *[]}}}
      */
     function getPoly(gridPoints, r, c, distance) {
         /**
@@ -251,7 +272,7 @@ var grid = (function () {
 
         var row = gridPoints[r][c].r;
         var col = gridPoints[r][c].c;
-        var id = getGridSquareId(row, col, distance, "");
+        var id = getGridSquareId(row, col, distance);
 
         var feature = {
             type: "Feature",
