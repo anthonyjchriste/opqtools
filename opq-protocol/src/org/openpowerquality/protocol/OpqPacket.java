@@ -249,7 +249,7 @@ public class OpqPacket implements Comparable<OpqPacket> {
    * Sets the bitfield of this packet.
    * @param bitField The bitfield of this packet.
    */
-  public void setBitField(int bitField) {
+  public void setBitfield(int bitField) {
     this.setDataPart(Protocol.BITFIELD, intToBytes(bitField));
   }
 
