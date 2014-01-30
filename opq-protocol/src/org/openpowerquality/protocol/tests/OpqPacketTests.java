@@ -143,7 +143,7 @@ public class OpqPacketTests {
   }
 
   @Test
-  public void testEqualsTransitive() {
+  public void testEqualsTransitcdive() {
     OpqPacket otherA = new OpqPacket();
     OpqPacket otherB = new OpqPacket();
     assertTrue(opqPacket.equals(otherA));

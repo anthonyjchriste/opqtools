@@ -1,4 +1,10 @@
-grid-generator/.idea/workspace.xml
-grid-generator/.idea/tasks.xml
-grid-generator/.idea/dictionaries/**
-grid-generator/examples/*.json
+grid-map/.idea/workspace.xml
+grid-map/.idea/tasks.xml
+grid-map/.idea/dictionaries/**
+grid-map/.idea/gradle.xml
+grid-map/examples/*.json
+
+opq-protocol/.idea/workspace.xml
+opq-protocol/.idea/tasks.xml
+opq-protocol/.idea/gradle.xml
+opq-protocol/.idea/dictionaries/**
