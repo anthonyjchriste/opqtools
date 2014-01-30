@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="leaflet" type="javaScript">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/lib/leaflet.js" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

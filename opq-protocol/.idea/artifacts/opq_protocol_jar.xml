@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="opq-protocol:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/opq_protocol_jar</output-path>
+    <root id="archive" name="opq-protocol.jar">
+      <element id="module-output" name="opq-protocol" />
+    </root>
+  </artifact>
+</component>
