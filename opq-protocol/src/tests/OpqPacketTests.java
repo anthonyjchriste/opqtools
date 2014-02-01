@@ -111,18 +111,27 @@ public class OpqPacketTests {
     assertEquals(opqPacket.getAlertValue(), 1.1234, 0.001);
   }
 
-  // Fix this, issues with overflows and not having a signed type in Java.
-  /**
   @Test
   public void testChecksumOnEmpty() {
     byte[] data = opqPacket.getData();
     int total = data[0] + data[1] + data[2] + data[3];
     opqPacket.setChecksum();
     assertEquals(opqPacket.getChecksum(), total);
-    System.out.println(total);
-
   }
-  */
+
+  @Test
+  public void testStringConstructor() {
+    opqPacket.setType(1);
+    opqPacket.setSequenceNumber(2);
+    opqPacket.setDeviceId(0xabcd);
+    opqPacket.setTimestamp(12);
+    opqPacket.setBitfield(13);
+    opqPacket.setPayload(new byte[]{0xa, 0xb, 0xc, 0xd});
+    opqPacket.computeChecksum();
+
+    OpqPacket other = new OpqPacket(opqPacket.getBase64Encoding());
+    assertArrayEquals(other.getData(), opqPacket.getData());
+  }
 
   @Test
   public void testCompareToEquals() {
@@ -161,7 +170,7 @@ public class OpqPacketTests {
   }
 
   @Test
-  public void testEqualsTransitcdive() {
+  public void testEqualsTransitive() {
     OpqPacket otherA = new OpqPacket();
     OpqPacket otherB = new OpqPacket();
     assertTrue(opqPacket.equals(otherA));
