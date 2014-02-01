@@ -68,6 +68,10 @@ public class OpqPacket implements Comparable<OpqPacket> {
     int getStopByte() {
       return this.stopByte;
     }
+
+    int getSize() {
+      return this.stopByte - this.startByte + 1;
+    }
   }
 
   /**
@@ -231,7 +235,7 @@ public class OpqPacket implements Comparable<OpqPacket> {
 
   /**
    * Sets the timestamp of this packet.
-   * @param timestamp The timestamp of this packet.
+   * @param timestamp The timestamp of this packet (ms since epoch).
    */
   public void setTimestamp(long timestamp) {
     this.setDataPart(Protocol.TIMESTAMP, longToBytes(timestamp));
@@ -252,6 +256,7 @@ public class OpqPacket implements Comparable<OpqPacket> {
   public void setBitfield(int bitField) {
     this.setDataPart(Protocol.BITFIELD, intToBytes(bitField));
   }
+
 
   /**
    * Returns the payload size of this packet.
