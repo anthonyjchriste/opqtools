@@ -305,6 +305,59 @@ public class OpqPacket implements Comparable<OpqPacket> {
   }
 
   /**
+   * Returns the voltage of this measurement.
+   * @return The voltage of this measurement.
+   */
+  public double getVoltage() {
+    byte[] payload = this.getPayload();
+    byte[] voltage = Arrays.copyOfRange(payload, 8, payload.length);
+    return ByteBuffer.wrap(voltage).getDouble();
+  }
+
+  /**
+   * Returns the frequency of this measurement.
+   * @return The frequency of this measurement.
+   */
+  public double getFrequency() {
+    byte[] payload = this.getPayload();
+    byte[] frequency = Arrays.copyOfRange(payload, 0, 8);
+    return ByteBuffer.wrap(frequency).getDouble();
+  }
+
+  /**
+   * Returns the value of this alert.
+   * @return the value of this alert.
+   */
+  public double getAlertValue() {
+    return ByteBuffer.wrap(this.getPayload()).getDouble();
+  }
+
+  /**
+   * Sets the value of this alert.
+   * @param value Value of this alert.
+   */
+  public void setAlertValue(double value) {
+    this.setPayload(ByteBuffer.allocate(8).putDouble(value).array());
+  }
+
+  /**
+   * Creates the byte sequence payload for setting the measurement.
+   * @param frequency - The frequency of this measurement.
+   * @param voltage - The voltage of this measurement.
+   */
+  public void setMeasurement(double frequency, double voltage) {
+    byte[] frequencyData;
+    byte[] voltageData;
+    byte[] measurement = new byte[16];
+
+    frequencyData = ByteBuffer.allocate(8).putDouble(frequency).array();
+    voltageData = ByteBuffer.allocate(8).putDouble(voltage).array();
+    System.arraycopy(frequencyData, 0, measurement, 0, frequencyData.length);
+    System.arraycopy(voltageData, 0, measurement, 8, voltageData.length);
+    this.setPayload(measurement);
+  }
+
+  /**
    * Convert an array of bytes into an integer.
    * @param b Array of bytes (must be of length 4).
    * @return An integer representing the array of bytes.

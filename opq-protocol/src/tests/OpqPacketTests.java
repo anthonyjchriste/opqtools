@@ -17,7 +17,7 @@
   Copyright 2014 Anthony Christe
 */
 
-package org.openpowerquality.protocol.tests;
+package tests;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -91,6 +91,24 @@ public class OpqPacketTests {
     assertArrayEquals(opqPacket.getDataPart(OpqPacket.Protocol.PAYLOAD), payload);
     assertEquals(opqPacket.getPayloadSize(), 4);
     assertArrayEquals(opqPacket.getDataPart(OpqPacket.Protocol.PAYLOAD_SIZE), new byte[]{0x00, 0x00, 0x00, 0x04});
+  }
+
+  @Test
+  public void testMeasurementVoltage() {
+    opqPacket.setMeasurement(0, 1.1234);
+    assertEquals(opqPacket.getVoltage(), 1.1234, 0.001);
+  }
+
+  @Test
+  public void testMeasurementFrequency() {
+    opqPacket.setMeasurement(1.1234, 0);
+    assertEquals(opqPacket.getFrequency(), 1.1234, 0.001);
+  }
+
+  @Test
+  public void testMeasurementAlert() {
+    opqPacket.setAlertValue(1.1234);
+    assertEquals(opqPacket.getAlertValue(), 1.1234, 0.001);
   }
 
   // Fix this, issues with overflows and not having a signed type in Java.
