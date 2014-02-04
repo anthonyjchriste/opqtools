@@ -49,8 +49,8 @@ public class OpqPacketTests {
 
   @Test
   public void testType() {
-    opqPacket.setType(3);
-    assertEquals(opqPacket.getType(), 3);
+    opqPacket.setType(OpqPacket.PacketType.ALERT_DEVICE);
+    assertEquals(opqPacket.getType(), OpqPacket.PacketType.ALERT_DEVICE);
     assertArrayEquals(opqPacket.getDataPart(OpqPacket.Protocol.TYPE), new byte[]{0x00, 0x00, 0x00, 0x03});
   }
 
@@ -107,8 +107,9 @@ public class OpqPacketTests {
 
   @Test
   public void testMeasurementAlert() {
-    opqPacket.setAlertValue(1.1234);
+    opqPacket.setAlertValue(1.1234, 123);
     assertEquals(opqPacket.getAlertValue(), 1.1234, 0.001);
+    assertEquals(opqPacket.getAlertDuration(), 123);
   }
 
   @Test
@@ -121,12 +122,12 @@ public class OpqPacketTests {
 
   @Test
   public void testStringConstructor() {
-    opqPacket.setType(1);
+    opqPacket.setType(OpqPacket.PacketType.ALERT_FREQUENCY);
     opqPacket.setSequenceNumber(2);
     opqPacket.setDeviceId(0xabcd);
     opqPacket.setTimestamp(12);
     opqPacket.setBitfield(13);
-    opqPacket.setPayload(new byte[]{0xa, 0xb, 0xc, 0xd});
+    opqPacket.setAlertValue(59.111, 123);
     opqPacket.computeChecksum();
 
     OpqPacket other = new OpqPacket(opqPacket.getBase64Encoding());
