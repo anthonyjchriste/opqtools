@@ -85,19 +85,25 @@ public class OpqPacket implements Comparable<OpqPacket> {
    * Enumerates the different packet types associated with this protocol.
    */
   public enum PacketType {
-    MEASUREMENT(0),
-    ALERT_FREQUENCY(1),
-    ALERT_VOLTAGE(2),
-    ALERT_DEVICE(3);
+    MEASUREMENT(0, "Measurement"),
+    ALERT_FREQUENCY(1, "Frequency Alert"),
+    ALERT_VOLTAGE(2, "Voltage Alert"),
+    ALERT_DEVICE(3, "Device Alert");
 
     private final int val;
+    private final String name;
 
-    PacketType(final int val) {
+    PacketType(final int val, final String name) {
       this.val = val;
+      this.name = name;
     }
 
     public int val() {
       return this.val;
+    }
+
+    public String getName() {
+      return this.name;
     }
 
     /**
