@@ -337,7 +337,6 @@ var grid = (function() {
     function onEachFeature(feature, layer) {
       if (feature.properties && feature.properties.popupContent) {
         layer.bindPopup(feature.properties.popupContent);
-        lastClickedSquareId = feature.properties.id;
       }
     }
 
