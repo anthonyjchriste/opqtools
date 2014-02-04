@@ -68,15 +68,15 @@ public class OpqPacket implements Comparable<OpqPacket> {
       this.stopByte = endByte;
     }
 
-    int getStartByte() {
+    public int getStartByte() {
       return this.startByte;
     }
 
-    int getStopByte() {
+    public int getStopByte() {
       return this.stopByte;
     }
 
-    int getSize() {
+    public int getSize() {
       return this.stopByte - this.startByte + 1;
     }
   }
@@ -96,7 +96,7 @@ public class OpqPacket implements Comparable<OpqPacket> {
       this.val = val;
     }
 
-    int val() {
+    public int val() {
       return this.val;
     }
 
