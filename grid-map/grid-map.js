@@ -21,7 +21,7 @@ var grid = (function() {
   "use strict";
   var map;
   var gridLayer;
-  var lastClickedSquareId;
+  var lastClickedGridId;
 
   /**
    * Defines starting and stopping points (lat, lng) that bound the grid creation algorithms.
@@ -334,6 +334,11 @@ var grid = (function() {
       map.removeLayer(gridLayer);
     }
 
+    function onGridClick(feature) {
+      lastClickedGridId = feature.properties.id;
+      gridLayer.setStyle({fillColor: 'red'});
+    }
+
     function onEachFeature(feature, layer) {
       if (feature.properties && feature.properties.popupContent) {
         layer.bindPopup(feature.properties.popupContent);
@@ -346,6 +351,10 @@ var grid = (function() {
     gridLayer = L.geoJson(polys, {
       onEachFeature: onEachFeature
     }).addTo(map);
+
+    gridLayer.on("click", function(e) {
+      onGridClick(e.layer.feature);
+    });
   }
 
   /**
@@ -391,6 +400,11 @@ var grid = (function() {
     updateGrid(getDistanceByZoom(zoom));
   }
 
+  /*function onGridClick(feature) {
+    lastClickedGridId = feature.properties.id;
+    console.log(feature.properties.id);
+  }*/
+
   return {
     /**
      * Create a map with a grid layer.
@@ -408,8 +422,15 @@ var grid = (function() {
       map.setView(center, zoom);
       updateGrid(getDistanceByZoom(zoom));
 
+      /*gridLayer.on("click", function(e) {
+        console.log("clicked on grid layer");
+        onGridClick(e.layer.feature);
+      });*/
+
       map.on("zoomend", onMapChange);
       map.on("dragend", onMapChange);
+
+
     },
 
     /**
@@ -442,9 +463,9 @@ var grid = (function() {
       }
     },
 
-    getLastClickedSquareId: function() {
-      return lastClickedSquareId;
-    }
+    getLastClickedGridId: function() {
+      return lastClickedGridId;
+    },
   };
 })();
 
