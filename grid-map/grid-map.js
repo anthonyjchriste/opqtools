@@ -22,6 +22,7 @@ var grid = (function() {
   var map;
   var gridLayer;
   var lastClickedGridId;
+  var onGridClickCallback;
 
   /**
    * Defines starting and stopping points (lat, lng) that bound the grid creation algorithms.
@@ -282,6 +283,7 @@ var grid = (function() {
         col: col,
         scale: distance,
         id: id,
+        boundingBox: L.latLngBounds(gridPoints[r + 1][c].point, gridPoints[r][c + 1].point),
         popupContent: "row: " + row +
           "<br />col: " + col +
           "<br />scale: " + distance +
@@ -334,14 +336,21 @@ var grid = (function() {
       map.removeLayer(gridLayer);
     }
 
-    function onGridClick(feature) {
+    function onGridClick(layer, feature) {
       lastClickedGridId = feature.properties.id;
-      gridLayer.setStyle({fillColor: 'red'});
+      layer.setStyle({fillColor: 'red'});
     }
+
 
     function onEachFeature(feature, layer) {
       if (feature.properties && feature.properties.popupContent) {
         layer.bindPopup(feature.properties.popupContent);
+      }
+
+      if(onGridClickCallback) {
+        layer.on({
+          click: function() {onGridClickCallback(feature, layer)}
+        });
       }
     }
 
@@ -351,10 +360,6 @@ var grid = (function() {
     gridLayer = L.geoJson(polys, {
       onEachFeature: onEachFeature
     }).addTo(map);
-
-    gridLayer.on("click", function(e) {
-      onGridClick(e.layer.feature);
-    });
   }
 
   /**
@@ -463,9 +468,11 @@ var grid = (function() {
       }
     },
 
-    getLastClickedGridId: function() {
-      return lastClickedGridId;
+    setOnGridClickCallback: function(callback) {
+      onGridClickCallback = callback;
     },
+
+    addDebugPoint: addDebugPoint
   };
 })();
 

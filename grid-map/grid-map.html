@@ -11,7 +11,15 @@
 <div id="map" style="height:800px"></div>
 <script type="text/javascript">
     var g = grid;
+
+    function onClick(feature, layer) {
+        
+    }
+
+
+    g.setOnGridClickCallback(onClick);
     g.initMap("map", g.island.OAHU.latLng, 7);
+
 </script>
 </body>
 </html>
