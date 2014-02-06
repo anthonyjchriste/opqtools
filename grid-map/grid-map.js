@@ -21,7 +21,6 @@ var grid = (function() {
   "use strict";
   var map;
   var gridLayer;
-  var lastClickedGridId;
   var onGridClickCallback;
 
   /**
@@ -335,12 +334,6 @@ var grid = (function() {
     if (map.hasLayer(gridLayer)) {
       map.removeLayer(gridLayer);
     }
-
-    function onGridClick(layer, feature) {
-      lastClickedGridId = feature.properties.id;
-      layer.setStyle({fillColor: 'red'});
-    }
-
 
     function onEachFeature(feature, layer) {
       if (feature.properties && feature.properties.popupContent) {
