@@ -47,6 +47,12 @@ var grid = (function() {
     var debugPoint = L.circle(latLng, 500, {color: color}).addTo(map);
   }
 
+  function invalidateSize() {
+    if(map) {
+      map.invalidateSize();
+    }
+  }
+
   /**
    * Converts degrees to radians.
    * @param degs - Degrees (as decimal)
@@ -465,7 +471,8 @@ var grid = (function() {
       onGridClickCallback = callback;
     },
 
-    addDebugPoint: addDebugPoint
+    addDebugPoint: addDebugPoint,
+    invalidateSize: invalidateSize
   };
 })();
 
