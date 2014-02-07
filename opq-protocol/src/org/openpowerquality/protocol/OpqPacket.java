@@ -447,7 +447,6 @@ public class OpqPacket implements Comparable<OpqPacket> {
    */
   public void setMeasurement(double frequency, double voltage) {
     byte[] frequencyData = doubleToBytes(frequency);
-    ;
     byte[] voltageData = doubleToBytes(voltage);
     byte[] measurement = new byte[16];
 
