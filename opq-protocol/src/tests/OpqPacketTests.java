@@ -49,37 +49,59 @@ public class OpqPacketTests {
 
   @Test
   public void testType() {
-    opqPacket.setType(OpqPacket.PacketType.ALERT_DEVICE);
-    assertEquals(opqPacket.getType(), OpqPacket.PacketType.ALERT_DEVICE);
-    assertArrayEquals(opqPacket.getDataPart(OpqPacket.Protocol.TYPE), new byte[]{0x00, 0x00, 0x00, 0x03});
+    for(OpqPacket.PacketType packetType : OpqPacket.PacketType.values()) {
+      opqPacket = new OpqPacket();
+      opqPacket.setType(packetType);
+      assertEquals(opqPacket.getType(), packetType);
+    }
   }
 
   @Test
-  public void testSequenceNumber() {
-    opqPacket.setSequenceNumber(305419947);
-    assertEquals(opqPacket.getSequenceNumber(), 305419947);
-    assertArrayEquals(opqPacket.getDataPart(OpqPacket.Protocol.SEQUENCE_NUMBER), new byte[]{0x12, 0x34, 0x56, (byte) 0xAB});
+  public void testValidSequenceNumber() {
+    opqPacket.setSequenceNumber(0);
+    assertEquals(opqPacket.getSequenceNumber(), 0);
+    opqPacket.setSequenceNumber(1);
+    assertEquals(opqPacket.getSequenceNumber(), 1);
+    opqPacket.setSequenceNumber(10000);
+    assertEquals(opqPacket.getSequenceNumber(), 10000);
+    opqPacket.setSequenceNumber(Integer.MAX_VALUE);
+    assertEquals(opqPacket.getSequenceNumber(), Integer.MAX_VALUE);
   }
 
   @Test
   public void testDeviceId() {
-    opqPacket.setDeviceId(1311768465173141112L);
-    assertEquals(opqPacket.getDeviceId(), 1311768465173141112L);
-    assertArrayEquals(opqPacket.getDataPart(OpqPacket.Protocol.DEVICE_ID), new byte[]{0x12, 0x34, 0x56, 0x78, 0x12, 0x34, 0x56, 0x78});
+    opqPacket.setDeviceId(0);
+    assertEquals(opqPacket.getDeviceId(), 0);
+    opqPacket.setDeviceId(1);
+    assertEquals(opqPacket.getDeviceId(), 1);
+    opqPacket.setDeviceId(10000);
+    assertEquals(opqPacket.getDeviceId(), 10000);
+    opqPacket.setDeviceId(Long.MAX_VALUE);
+    assertEquals(opqPacket.getDeviceId(), Long.MAX_VALUE);
   }
 
   @Test
   public void testTimestamp() {
-    opqPacket.setTimestamp(1311768465173141112L);
-    assertEquals(opqPacket.getTimestamp(), 1311768465173141112L);
-    assertArrayEquals(opqPacket.getDataPart(OpqPacket.Protocol.TIMESTAMP), new byte[]{0x12, 0x34, 0x56, 0x78, 0x12, 0x34, 0x56, 0x78});
+    opqPacket.setTimestamp(0);
+    assertEquals(opqPacket.getTimestamp(), 0);
+    opqPacket.setTimestamp(1);
+    assertEquals(opqPacket.getTimestamp(), 1);
+    opqPacket.setTimestamp(10000);
+    assertEquals(opqPacket.getTimestamp(), 10000);
+    opqPacket.setTimestamp(Long.MAX_VALUE);
+    assertEquals(opqPacket.getTimestamp(), Long.MAX_VALUE);
   }
 
   @Test
   public void testBitfield() {
-    opqPacket.setBitfield(305419896);
-    assertEquals(opqPacket.getBitfield(), 305419896);
-    assertArrayEquals(opqPacket.getDataPart(OpqPacket.Protocol.BITFIELD), new byte[]{0x12, 0x34, 0x56, 0x78});
+    opqPacket.setBitfield(0);
+    assertEquals(opqPacket.getBitfield(), 0);
+    opqPacket.setBitfield(1);
+    assertEquals(opqPacket.getBitfield(), 1);
+    opqPacket.setBitfield(10000);
+    assertEquals(opqPacket.getBitfield(), 10000);
+    opqPacket.setBitfield(Integer.MAX_VALUE);
+    assertEquals(opqPacket.getBitfield(), Integer.MAX_VALUE);
   }
 
   @Test
@@ -95,21 +117,69 @@ public class OpqPacketTests {
 
   @Test
   public void testMeasurementVoltage() {
-    opqPacket.setMeasurement(0, 1.1234);
-    assertEquals(opqPacket.getVoltage(), 1.1234, 0.001);
+    opqPacket.setMeasurement(0, 0);
+    assertEquals(opqPacket.getVoltage(), 0, 0);
+    opqPacket.setMeasurement(0, 1.0);
+    assertEquals(opqPacket.getVoltage(), 1.0, 0);
+    opqPacket.setMeasurement(0, 10000.0);
+    assertEquals(opqPacket.getVoltage(), 10000.0, 0);
+    opqPacket.setMeasurement(0, Double.MAX_VALUE);
+    assertEquals(opqPacket.getVoltage(), Double.MAX_VALUE, 0);
   }
 
   @Test
   public void testMeasurementFrequency() {
-    opqPacket.setMeasurement(1.1234, 0);
-    assertEquals(opqPacket.getFrequency(), 1.1234, 0.001);
+    opqPacket.setMeasurement(0, 0);
+    assertEquals(opqPacket.getFrequency(), 0, 0);
+    opqPacket.setMeasurement(1.00, 0);
+    assertEquals(opqPacket.getFrequency(), 1.0, 0);
+    opqPacket.setMeasurement(10000.0, 0);
+    assertEquals(opqPacket.getFrequency(), 10000.0, 0);
+    opqPacket.setMeasurement(Double.MAX_VALUE, 0);
+    assertEquals(opqPacket.getFrequency(), Double.MAX_VALUE, 0);
   }
 
   @Test
-  public void testMeasurementAlert() {
-    opqPacket.setAlertValue(1.1234, 123);
-    assertEquals(opqPacket.getAlertValue(), 1.1234, 0.001);
-    assertEquals(opqPacket.getAlertDuration(), 123);
+  public void testMeasurementAlertValue() {
+    opqPacket.setAlertValue(0, 0);
+    assertEquals(opqPacket.getAlertValue(), 0, 0);
+    opqPacket.setAlertValue(1.0, 0);
+    assertEquals(opqPacket.getAlertValue(), 1.0, 0);
+    opqPacket.setAlertValue(10000.0, 0);
+    assertEquals(opqPacket.getAlertValue(), 10000.0, 0);
+    opqPacket.setAlertValue(Double.MAX_VALUE, 0);
+    assertEquals(opqPacket.getAlertValue(), Double.MAX_VALUE, 0);
+  }
+
+  @Test
+  public void testMeasurementAlertDuration() {
+    opqPacket.setAlertValue(0, 0);
+    assertEquals(opqPacket.getAlertDuration(), 0);
+    opqPacket.setAlertValue(0, 1);
+    assertEquals(opqPacket.getAlertDuration(), 1);
+    opqPacket.setAlertValue(0, 10000);
+    assertEquals(opqPacket.getAlertDuration(), 10000);
+    opqPacket.setAlertValue(0, Long.MAX_VALUE);
+    assertEquals(opqPacket.getAlertDuration(), Long.MAX_VALUE);
+  }
+
+  @Test
+  public void testMeasurementFull() {
+    opqPacket.setAlertValue(0, 0);
+    assertEquals(opqPacket.getAlertDuration(), 0);
+    assertEquals(opqPacket.getAlertValue(), 0.0, 0);
+
+    opqPacket.setAlertValue(1.0, 1);
+    assertEquals(opqPacket.getAlertDuration(), 1);
+    assertEquals(opqPacket.getAlertValue(), 1.0, 0);
+
+    opqPacket.setAlertValue(10000.0, 10000);
+    assertEquals(opqPacket.getAlertDuration(), 10000);
+    assertEquals(opqPacket.getAlertValue(), 10000.0, 0);
+
+    opqPacket.setAlertValue(Double.MAX_VALUE, Long.MAX_VALUE);
+    assertEquals(opqPacket.getAlertDuration(), Long.MAX_VALUE);
+    assertEquals(opqPacket.getAlertValue(), Double.MAX_VALUE, 0);
   }
 
   @Test

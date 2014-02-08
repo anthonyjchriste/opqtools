@@ -19,6 +19,10 @@
 
 package org.openpowerquality.protocol;
 
+import org.openpowerquality.protocol.exceptions.InvalidByteSizeException;
+import org.openpowerquality.protocol.exceptions.NegativeValueException;
+import org.openpowerquality.protocol.exceptions.OpqPacketException;
+
 import javax.xml.bind.DatatypeConverter;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -203,7 +207,13 @@ public class OpqPacket implements Comparable<OpqPacket> {
    * @return Base 64 encoded String.
    */
   public String getBase64Encoding() {
-    return DatatypeConverter.printBase64Binary(this.data);
+    try {
+      return DatatypeConverter.printBase64Binary(this.data);
+    }
+    catch (IllegalArgumentException e) {
+      throw new OpqPacketException("Base 64 string could not be decoded", e.getCause());
+    }
+
   }
 
   /**
@@ -267,6 +277,10 @@ public class OpqPacket implements Comparable<OpqPacket> {
    * @param sequenceNumber The squence number of this packet.
    */
   public void setSequenceNumber(int sequenceNumber) {
+    if(sequenceNumber < 0) {
+      throw new NegativeValueException(sequenceNumber);
+    }
+
     this.setDataPart(Protocol.SEQUENCE_NUMBER, intToBytes(sequenceNumber));
   }
 
@@ -285,6 +299,10 @@ public class OpqPacket implements Comparable<OpqPacket> {
    * @param deviceId The device id of this packet.
    */
   public void setDeviceId(long deviceId) {
+    if(deviceId < 0) {
+      throw new NegativeValueException(deviceId);
+    }
+
     this.setDataPart(Protocol.DEVICE_ID, longToBytes(deviceId));
   }
 
@@ -303,6 +321,10 @@ public class OpqPacket implements Comparable<OpqPacket> {
    * @param timestamp The timestamp of this packet (ms since epoch).
    */
   public void setTimestamp(long timestamp) {
+    if(timestamp < 0) {
+      throw new NegativeValueException(timestamp);
+    }
+
     this.setDataPart(Protocol.TIMESTAMP, longToBytes(timestamp));
   }
 
@@ -340,6 +362,10 @@ public class OpqPacket implements Comparable<OpqPacket> {
    * @param payloadSize The payload size of this packet.
    */
   public void setPayloadSize(int payloadSize) {
+    if(payloadSize < 0) {
+      throw new NegativeValueException(payloadSize);
+    }
+
     this.setDataPart(Protocol.PAYLOAD_SIZE, intToBytes(payloadSize));
   }
 
@@ -388,6 +414,14 @@ public class OpqPacket implements Comparable<OpqPacket> {
   public double getVoltage() {
     byte[] payload = this.getPayload();
     byte[] voltage = Arrays.copyOfRange(payload, 8, payload.length);
+
+    if(payload.length != 16) {
+      throw new InvalidByteSizeException(payload.length, 16);
+    }
+    if(voltage.length != 8) {
+      throw new InvalidByteSizeException(voltage.length, 8);
+    }
+
     return bytesToDouble(voltage);
   }
 
@@ -399,6 +433,14 @@ public class OpqPacket implements Comparable<OpqPacket> {
   public double getFrequency() {
     byte[] payload = this.getPayload();
     byte[] frequency = Arrays.copyOfRange(payload, 0, 8);
+
+    if(payload.length != 16) {
+      throw new InvalidByteSizeException(payload.length, 16);
+    }
+    if(frequency.length != 8) {
+      throw new InvalidByteSizeException(frequency.length, 8);
+    }
+
     return bytesToDouble(frequency);
   }
 
@@ -409,6 +451,14 @@ public class OpqPacket implements Comparable<OpqPacket> {
   public double getAlertValue() {
     byte[] payload = this.getPayload();
     byte[] alertValue = Arrays.copyOfRange(payload, 0, 8);
+
+    if(payload.length != 16) {
+      throw new InvalidByteSizeException(payload.length, 16);
+    }
+    if(alertValue.length != 8) {
+      throw new InvalidByteSizeException(alertValue.length, 8);
+    }
+
     return bytesToDouble(alertValue);
   }
 
@@ -419,6 +469,14 @@ public class OpqPacket implements Comparable<OpqPacket> {
   public long getAlertDuration() {
     byte[] payload = this.getPayload();
     byte[] durationValue = Arrays.copyOfRange(payload, 8, payload.length);
+
+    if(payload.length != 16) {
+      throw new InvalidByteSizeException(payload.length, 16);
+    }
+    if(durationValue.length != 8) {
+      throw new InvalidByteSizeException(durationValue.length, 8);
+    }
+
     return bytesToLong(durationValue);
   }
 
@@ -429,9 +487,20 @@ public class OpqPacket implements Comparable<OpqPacket> {
    * @param duration The duration of this alert (in ms).
    */
   public void setAlertValue(double value, long duration) {
+    if(value < 0 || duration < 0) {
+      throw new OpqPacketException("value and duration must be non-negative");
+    }
+
     byte[] alertData = doubleToBytes(value);
     byte[] durationData = longToBytes(duration);
     byte[] alertValue = new byte[16];
+
+    if(alertData.length != 8) {
+      throw new InvalidByteSizeException(alertData.length, 8);
+    }
+    if(durationData.length != 8) {
+      throw new InvalidByteSizeException(durationData.length, 8);
+    }
 
     System.arraycopy(alertData, 0, alertValue, 0, alertData.length);
     System.arraycopy(durationData, 0, alertValue, 8, durationData.length);
@@ -446,10 +515,20 @@ public class OpqPacket implements Comparable<OpqPacket> {
    * @param voltage   - The voltage of this measurement.
    */
   public void setMeasurement(double frequency, double voltage) {
+    if(frequency < 0 || voltage < 0) {
+      throw new OpqPacketException("Values must be non-negative");
+    }
+
     byte[] frequencyData = doubleToBytes(frequency);
-    ;
     byte[] voltageData = doubleToBytes(voltage);
     byte[] measurement = new byte[16];
+
+    if(frequencyData.length != 8) {
+      throw new InvalidByteSizeException(frequencyData.length, 8);
+    }
+    if(voltageData.length != 8) {
+      throw new InvalidByteSizeException(frequencyData.length, 8);
+    }
 
     System.arraycopy(frequencyData, 0, measurement, 0, frequencyData.length);
     System.arraycopy(voltageData, 0, measurement, 8, voltageData.length);
@@ -464,7 +543,9 @@ public class OpqPacket implements Comparable<OpqPacket> {
    * @return An integer representing the array of bytes.
    */
   public static int bytesToInt(byte[] b) {
-    assert (b.length == 4);
+    if(b.length != 4) {
+      throw new InvalidByteSizeException(b.length, 4);
+    }
     return ByteBuffer.wrap(b).getInt();
   }
 
@@ -476,7 +557,9 @@ public class OpqPacket implements Comparable<OpqPacket> {
    * @return A long representing the array of bytes.
    */
   public static long bytesToLong(byte[] b) {
-    assert (b.length == 8);
+    if(b.length != 8) {
+      throw new InvalidByteSizeException(b.length, 8);
+    }
     return ByteBuffer.wrap(b).getLong();
   }
 
@@ -486,6 +569,9 @@ public class OpqPacket implements Comparable<OpqPacket> {
    * @return A double representing the array of bytes.
    */
   public static double bytesToDouble(byte[] b) {
+    if(b.length != 8) {
+      throw new InvalidByteSizeException(b.length, 8);
+    }
     return ByteBuffer.wrap(b).getDouble();
   }
 
