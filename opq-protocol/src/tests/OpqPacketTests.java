@@ -141,45 +141,45 @@ public class OpqPacketTests {
 
   @Test
   public void testMeasurementAlertValue() {
-    opqPacket.setAlertValue(0, 0);
-    assertEquals(opqPacket.getAlertValue(), 0, 0);
-    opqPacket.setAlertValue(1.0, 0);
-    assertEquals(opqPacket.getAlertValue(), 1.0, 0);
-    opqPacket.setAlertValue(10000.0, 0);
-    assertEquals(opqPacket.getAlertValue(), 10000.0, 0);
-    opqPacket.setAlertValue(Double.MAX_VALUE, 0);
-    assertEquals(opqPacket.getAlertValue(), Double.MAX_VALUE, 0);
+    opqPacket.setEventValue(0, 0);
+    assertEquals(opqPacket.getEventValue(), 0, 0);
+    opqPacket.setEventValue(1.0, 0);
+    assertEquals(opqPacket.getEventValue(), 1.0, 0);
+    opqPacket.setEventValue(10000.0, 0);
+    assertEquals(opqPacket.getEventValue(), 10000.0, 0);
+    opqPacket.setEventValue(Double.MAX_VALUE, 0);
+    assertEquals(opqPacket.getEventValue(), Double.MAX_VALUE, 0);
   }
 
   @Test
   public void testMeasurementAlertDuration() {
-    opqPacket.setAlertValue(0, 0);
-    assertEquals(opqPacket.getAlertDuration(), 0);
-    opqPacket.setAlertValue(0, 1);
-    assertEquals(opqPacket.getAlertDuration(), 1);
-    opqPacket.setAlertValue(0, 10000);
-    assertEquals(opqPacket.getAlertDuration(), 10000);
-    opqPacket.setAlertValue(0, Long.MAX_VALUE);
-    assertEquals(opqPacket.getAlertDuration(), Long.MAX_VALUE);
+    opqPacket.setEventValue(0, 0);
+    assertEquals(opqPacket.getEventDuration(), 0);
+    opqPacket.setEventValue(0, 1);
+    assertEquals(opqPacket.getEventDuration(), 1);
+    opqPacket.setEventValue(0, 10000);
+    assertEquals(opqPacket.getEventDuration(), 10000);
+    opqPacket.setEventValue(0, Long.MAX_VALUE);
+    assertEquals(opqPacket.getEventDuration(), Long.MAX_VALUE);
   }
 
   @Test
   public void testMeasurementFull() {
-    opqPacket.setAlertValue(0, 0);
-    assertEquals(opqPacket.getAlertDuration(), 0);
-    assertEquals(opqPacket.getAlertValue(), 0.0, 0);
+    opqPacket.setEventValue(0, 0);
+    assertEquals(opqPacket.getEventDuration(), 0);
+    assertEquals(opqPacket.getEventValue(), 0.0, 0);
 
-    opqPacket.setAlertValue(1.0, 1);
-    assertEquals(opqPacket.getAlertDuration(), 1);
-    assertEquals(opqPacket.getAlertValue(), 1.0, 0);
+    opqPacket.setEventValue(1.0, 1);
+    assertEquals(opqPacket.getEventDuration(), 1);
+    assertEquals(opqPacket.getEventValue(), 1.0, 0);
 
-    opqPacket.setAlertValue(10000.0, 10000);
-    assertEquals(opqPacket.getAlertDuration(), 10000);
-    assertEquals(opqPacket.getAlertValue(), 10000.0, 0);
+    opqPacket.setEventValue(10000.0, 10000);
+    assertEquals(opqPacket.getEventDuration(), 10000);
+    assertEquals(opqPacket.getEventValue(), 10000.0, 0);
 
-    opqPacket.setAlertValue(Double.MAX_VALUE, Long.MAX_VALUE);
-    assertEquals(opqPacket.getAlertDuration(), Long.MAX_VALUE);
-    assertEquals(opqPacket.getAlertValue(), Double.MAX_VALUE, 0);
+    opqPacket.setEventValue(Double.MAX_VALUE, Long.MAX_VALUE);
+    assertEquals(opqPacket.getEventDuration(), Long.MAX_VALUE);
+    assertEquals(opqPacket.getEventValue(), Double.MAX_VALUE, 0);
   }
 
   @Test
@@ -192,12 +192,12 @@ public class OpqPacketTests {
 
   @Test
   public void testStringConstructor() {
-    opqPacket.setType(OpqPacket.PacketType.ALERT_FREQUENCY);
+    opqPacket.setType(OpqPacket.PacketType.EVENT_FREQUENCY);
     opqPacket.setSequenceNumber(2);
     opqPacket.setDeviceId(0xabcd);
     opqPacket.setTimestamp(12);
     opqPacket.setBitfield(13);
-    opqPacket.setAlertValue(59.111, 123);
+    opqPacket.setEventValue(59.111, 123);
     opqPacket.computeChecksum();
 
     OpqPacket other = new OpqPacket(opqPacket.getBase64Encoding());
