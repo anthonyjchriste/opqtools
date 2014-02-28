@@ -90,9 +90,9 @@ public class OpqPacket implements Comparable<OpqPacket> {
    */
   public enum PacketType {
     MEASUREMENT(0, "Measurement"),
-    ALERT_FREQUENCY(1, "Frequency Alert"),
-    ALERT_VOLTAGE(2, "Voltage Alert"),
-    ALERT_DEVICE(3, "Device Alert");
+    EVENT_FREQUENCY(1, "Frequency Event"),
+    EVENT_VOLTAGE(2, "Voltage Event"),
+    EVENT_DEVICE(3, "Device Event");
 
     private final int val;
     private final String name;
@@ -445,28 +445,28 @@ public class OpqPacket implements Comparable<OpqPacket> {
   }
 
   /**
-   * Returns the value of this alert.
-   * @return the value of this alert.
+   * Returns the value of this event.
+   * @return the value of this event.
    */
-  public double getAlertValue() {
+  public double getEventValue() {
     byte[] payload = this.getPayload();
-    byte[] alertValue = Arrays.copyOfRange(payload, 0, 8);
+    byte[] eventValue = Arrays.copyOfRange(payload, 0, 8);
 
     if(payload.length != 16) {
       throw new InvalidByteSizeException(payload.length, 16);
     }
-    if(alertValue.length != 8) {
-      throw new InvalidByteSizeException(alertValue.length, 8);
+    if(eventValue.length != 8) {
+      throw new InvalidByteSizeException(eventValue.length, 8);
     }
 
-    return bytesToDouble(alertValue);
+    return bytesToDouble(eventValue);
   }
 
   /**
-   * Returns the duration of this alert (in ms).
-   * @return The duration of this alert (in ms).
+   * Returns the duration of this event (in ms).
+   * @return The duration of this event (in ms).
    */
-  public long getAlertDuration() {
+  public long getEventDuration() {
     byte[] payload = this.getPayload();
     byte[] durationValue = Arrays.copyOfRange(payload, 8, payload.length);
 
@@ -481,31 +481,31 @@ public class OpqPacket implements Comparable<OpqPacket> {
   }
 
   /**
-   * Sets the value of this alert.
+   * Sets the value of this event.
    *
-   * @param value Value of this alert.
-   * @param duration The duration of this alert (in ms).
+   * @param value Value of this event.
+   * @param duration The duration of this event (in ms).
    */
-  public void setAlertValue(double value, long duration) {
+  public void setEventValue(double value, long duration) {
     if(value < 0 || duration < 0) {
       throw new OpqPacketException("value and duration must be non-negative");
     }
 
-    byte[] alertData = doubleToBytes(value);
+    byte[] eventData = doubleToBytes(value);
     byte[] durationData = longToBytes(duration);
-    byte[] alertValue = new byte[16];
+    byte[] eventValue = new byte[16];
 
-    if(alertData.length != 8) {
-      throw new InvalidByteSizeException(alertData.length, 8);
+    if(eventData.length != 8) {
+      throw new InvalidByteSizeException(eventData.length, 8);
     }
     if(durationData.length != 8) {
       throw new InvalidByteSizeException(durationData.length, 8);
     }
 
-    System.arraycopy(alertData, 0, alertValue, 0, alertData.length);
-    System.arraycopy(durationData, 0, alertValue, 8, durationData.length);
+    System.arraycopy(eventData, 0, eventValue, 0, eventData.length);
+    System.arraycopy(durationData, 0, eventValue, 8, durationData.length);
 
-    this.setPayload(alertValue);
+    this.setPayload(eventValue);
   }
 
   /**
