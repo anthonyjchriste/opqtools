@@ -92,7 +92,8 @@ public class OpqPacket implements Comparable<OpqPacket> {
     MEASUREMENT(0, "Measurement"),
     EVENT_FREQUENCY(1, "Frequency Event"),
     EVENT_VOLTAGE(2, "Voltage Event"),
-    EVENT_DEVICE(3, "Device Event");
+    EVENT_DEVICE(3, "Device Event"),
+    PING(4, "Ping");
 
     private final int val;
     private final String name;
@@ -260,6 +261,10 @@ public class OpqPacket implements Comparable<OpqPacket> {
    */
   public void setType(PacketType packetType) {
     this.setDataPart(Protocol.TYPE, intToBytes(packetType.val()));
+  }
+
+  public void makePingType() {
+    this.setType(PacketType.PING);
   }
 
   /**
