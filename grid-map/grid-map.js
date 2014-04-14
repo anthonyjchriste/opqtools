@@ -361,6 +361,14 @@ var grid = (function() {
     }).addTo(map);
   }
 
+  function resetStyles() {
+
+  }
+
+  function colorLayer(layer, color) {
+    layer.setStyle({fillColor: color})
+  }
+
   /**
    * Return the distance between points in the grid based on the zoom level of the map.
    * @param zoom - Zoom of the map.
@@ -472,6 +480,7 @@ var grid = (function() {
     },
 
     addDebugPoint: addDebugPoint,
+    colorLayer: colorLayer,
     invalidateSize: invalidateSize
   };
 })();

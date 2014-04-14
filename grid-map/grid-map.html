@@ -11,11 +11,16 @@
 <div id="map" style="height:800px"></div>
 <script type="text/javascript">
     var g = grid;
+    var oldLayer;
 
     function onClick(feature, layer) {
-
+      if(oldLayer) {
+        oldLayer.setStyle({fillColor: '#0033ff'});
+      }
+      console.log(layer);
+      g.colorLayer(layer, 'red');
+      oldLayer = layer;
     }
-
 
     g.setOnGridClickCallback(onClick);
     g.initMap("map", g.island.OAHU.latLng, 7);
