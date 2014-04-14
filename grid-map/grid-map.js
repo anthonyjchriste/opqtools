@@ -23,6 +23,8 @@ var grid = (function() {
   var gridLayer;
   var onGridClickCallback;
   var singleSelectionMode;
+  var invariantColorizationMode;
+  var coloredLayers = [];
   var oldLayer;
 
   /**
@@ -353,6 +355,14 @@ var grid = (function() {
           click: function() {onGridClickCallback(feature, layer)}
         });
       }
+
+      if(invariantColorizationMode) {
+        for(var i = 0; i < coloredLayers.length; i++) {
+          if(coloredLayers[i][0] === feature.properties.id) {
+            layer.setStyle({fillColor: coloredLayers[i][1]});
+          }
+        }
+      }
     }
 
     var points = getGridPoints(distance);
@@ -363,7 +373,10 @@ var grid = (function() {
     }).addTo(map);
   }
 
-  function colorLayer(layer, color) {
+  function colorLayer(feature, layer, color) {
+    if(invariantColorizationMode) {
+      coloredLayers.push([feature.properties.id, color]);
+    }
     if(singleSelectionMode) {
       if(oldLayer) {
         oldLayer.setStyle({fillColor: "#0033FF"})
@@ -434,11 +447,6 @@ var grid = (function() {
       map.setView(center, zoom);
       updateGrid(getDistanceByZoom(zoom));
 
-      /*gridLayer.on("click", function(e) {
-        console.log("clicked on grid layer");
-        onGridClick(e.layer.feature);
-      });*/
-
       map.on("zoomend", onMapChange);
       map.on("dragend", onMapChange);
 
@@ -481,6 +489,10 @@ var grid = (function() {
 
     setSingleSelectionMode: function(singleSelect) {
       singleSelectionMode = singleSelect;
+    },
+
+    setInvariantColorizationMode: function(invariantColorization) {
+      invariantColorizationMode = invariantColorization;
     },
 
     addDebugPoint: addDebugPoint,
