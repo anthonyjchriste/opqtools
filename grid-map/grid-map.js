@@ -22,6 +22,8 @@ var grid = (function() {
   var map;
   var gridLayer;
   var onGridClickCallback;
+  var singleSelectionMode;
+  var oldLayer;
 
   /**
    * Defines starting and stopping points (lat, lng) that bound the grid creation algorithms.
@@ -361,6 +363,16 @@ var grid = (function() {
     }).addTo(map);
   }
 
+  function colorLayer(layer, color) {
+    if(singleSelectionMode) {
+      if(oldLayer) {
+        oldLayer.setStyle({fillColor: "#0033FF"})
+      }
+      oldLayer = layer;
+    }
+    layer.setStyle({fillColor: color})
+  }
+
   /**
    * Return the distance between points in the grid based on the zoom level of the map.
    * @param zoom - Zoom of the map.
@@ -404,10 +416,6 @@ var grid = (function() {
     updateGrid(getDistanceByZoom(zoom));
   }
 
-  /*function onGridClick(feature) {
-    lastClickedGridId = feature.properties.id;
-    console.log(feature.properties.id);
-  }*/
 
   return {
     /**
@@ -471,7 +479,12 @@ var grid = (function() {
       onGridClickCallback = callback;
     },
 
+    setSingleSelectionMode: function(singleSelect) {
+      singleSelectionMode = singleSelect;
+    },
+
     addDebugPoint: addDebugPoint,
+    colorLayer: colorLayer,
     invalidateSize: invalidateSize
   };
 })();
