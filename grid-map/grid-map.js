@@ -374,10 +374,11 @@ var grid = (function() {
   }
 
   function colorLayer(feature, layer, color) {
-    if(invariantColorizationMode) {
-      coloredLayers.push([feature.properties.id, color]);
-    }
     if(singleSelectionMode) {
+      if(invariantColorizationMode) {
+        coloredLayers = [];
+        coloredLayers.push([feature.properties.id, color]);
+      }
       if(oldLayer) {
         oldLayer.setStyle({fillColor: "#0033FF"})
       }
