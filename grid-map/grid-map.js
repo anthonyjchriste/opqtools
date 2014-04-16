@@ -19,10 +19,41 @@
 
 var grid = (function() {
   "use strict";
+  /**
+   * The div containing the map.
+   */
   var map;
+
+  /**
+   * The layer which contains the set of polygon grids.
+   */
   var gridLayer;
+
+  /**
+   * The method which is called when a grid-square is clicked.
+   */
   var onGridClickCallback;
+
+  /**
+   * Boolean value which determines if grid-squares can only be single selected or if multiple
+   * grid-squares can be selected at once.
+   */
   var singleSelectionMode;
+
+  /**
+   * Boolean value that when set will keep grid-squares colored invariant to panning.
+   */
+  var invariantColorizationMode;
+
+  /**
+   * List of grid-squares that are colored before a pan so that they can be recolored after a pan.
+   * @type {Array}
+   */
+  var coloredLayers = [];
+
+  /**
+   * The grid-square that was previously clicked.
+   */
   var oldLayer;
 
   /**
@@ -353,6 +384,14 @@ var grid = (function() {
           click: function() {onGridClickCallback(feature, layer)}
         });
       }
+
+      if(invariantColorizationMode) {
+        for(var i = 0; i < coloredLayers.length; i++) {
+          if(coloredLayers[i][0] === feature.properties.id) {
+            layer.setStyle({fillColor: coloredLayers[i][1]});
+          }
+        }
+      }
     }
 
     var points = getGridPoints(distance);
@@ -363,8 +402,18 @@ var grid = (function() {
     }).addTo(map);
   }
 
-  function colorLayer(layer, color) {
+  /**
+   * Color a grid square represented as a layer.
+   * @param feature Contains the row, column, and grid-scale information.
+   * @param layer The layer to color.
+   * @param color The color to color the layer (can specified in English (i.e. red) or as hex (i.e. #FF0000).
+   */
+  function colorLayer(feature, layer, color) {
     if(singleSelectionMode) {
+      if(invariantColorizationMode) {
+        coloredLayers = [];
+        coloredLayers.push([feature.properties.id, color]);
+      }
       if(oldLayer) {
         oldLayer.setStyle({fillColor: "#0033FF"})
       }
@@ -434,11 +483,6 @@ var grid = (function() {
       map.setView(center, zoom);
       updateGrid(getDistanceByZoom(zoom));
 
-      /*gridLayer.on("click", function(e) {
-        console.log("clicked on grid layer");
-        onGridClick(e.layer.feature);
-      });*/
-
       map.on("zoomend", onMapChange);
       map.on("dragend", onMapChange);
 
@@ -481,6 +525,10 @@ var grid = (function() {
 
     setSingleSelectionMode: function(singleSelect) {
       singleSelectionMode = singleSelect;
+    },
+
+    setInvariantColorizationMode: function(invariantColorization) {
+      invariantColorizationMode = invariantColorization;
     },
 
     addDebugPoint: addDebugPoint,

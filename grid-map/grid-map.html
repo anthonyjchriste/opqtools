@@ -11,11 +11,12 @@
 <div id="map" style="height:800px"></div>
 <script type="text/javascript">
   function onClick(feature, layer) {
-    g.colorLayer(layer, 'red');
+    g.colorLayer(feature, layer, 'red');
   }
 
   var g = grid;
   g.setSingleSelectionMode(true);
+  //g.setInvariantColorizationMode(true);
   g.setOnGridClickCallback(onClick);
   g.initMap("map", g.island.OAHU.latLng, 7);
 
