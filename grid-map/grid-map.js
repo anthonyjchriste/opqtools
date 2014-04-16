@@ -19,12 +19,41 @@
 
 var grid = (function() {
   "use strict";
+  /**
+   * The div containing the map.
+   */
   var map;
+
+  /**
+   * The layer which contains the set of polygon grids.
+   */
   var gridLayer;
+
+  /**
+   * The method which is called when a grid-square is clicked.
+   */
   var onGridClickCallback;
+
+  /**
+   * Boolean value which determines if grid-squares can only be single selected or if multiple
+   * grid-squares can be selected at once.
+   */
   var singleSelectionMode;
+
+  /**
+   * Boolean value that when set will keep grid-squares colored invariant to panning.
+   */
   var invariantColorizationMode;
+
+  /**
+   * List of grid-squares that are colored before a pan so that they can be recolored after a pan.
+   * @type {Array}
+   */
   var coloredLayers = [];
+
+  /**
+   * The grid-square that was previously clicked.
+   */
   var oldLayer;
 
   /**
@@ -373,6 +402,12 @@ var grid = (function() {
     }).addTo(map);
   }
 
+  /**
+   * Color a grid square represented as a layer.
+   * @param feature Contains the row, column, and grid-scale information.
+   * @param layer The layer to color.
+   * @param color The color to color the layer (can specified in English (i.e. red) or as hex (i.e. #FF0000).
+   */
   function colorLayer(feature, layer, color) {
     if(singleSelectionMode) {
       if(invariantColorizationMode) {
