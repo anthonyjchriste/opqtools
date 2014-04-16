@@ -67,7 +67,8 @@ var grid = (function() {
   /**
    * Convenience bearings for getNextLatLng method. These values can be passed into the method
    * as the bearing parameter.
-   * @type {{NORTH: number, NORTH_EAST: number, EAST: number, SOUTH_EAST: number, SOUTH: number, SOUTH_WEST: number, WEST: number, NORTH_WEST: number}}
+   * @type {{NORTH: number, NORTH_EAST: number, EAST: number, SOUTH_EAST: number, SOUTH: number, SOUTH_WEST: number,
+   * WEST: number, NORTH_WEST: number}}
    */
   var bearing = {
     NORTH: 0,
@@ -272,7 +273,7 @@ var grid = (function() {
 
     var row = gridPoints[r][c].r;
     var col = gridPoints[r][c].c;
-    var id = getGridSquareId(row, col, distance);
+    var id = getGridSquareId(row, col, distance, "");
 
     var feature = {
       type: "Feature",
@@ -341,7 +342,7 @@ var grid = (function() {
 
       if(callbacks.onGridClick) {
         layer.on({
-          click: function() {callbacks.onGridClick(feature, layer)}
+          click: function() {callbacks.onGridClick(feature, layer);}
         });
       }
 
@@ -425,14 +426,14 @@ var grid = (function() {
     minZoom: 5,
     singleSelectionMode: false,
     invariantColorizationMode: false,
-    onGridClickCallback: null,
+    onGridClickCallback: null
   };
 
   /**
    * List of public callbacks that users can implement.
    */
   var callbacks = {
-    onGridClick: null,
+    onGridClick: null
   };
 
 
@@ -469,11 +470,11 @@ var grid = (function() {
         coloredLayers.push([feature.properties.id, color]);
       }
       if(oldLayer) {
-        oldLayer.setStyle({fillColor: "#0033FF"})
+        oldLayer.setStyle({fillColor: "#0033FF"});
       }
       oldLayer = layer;
     }
-    layer.setStyle({fillColor: color})
+    layer.setStyle({fillColor: color});
   }
 
 
@@ -487,7 +488,7 @@ var grid = (function() {
    * @param color - The color of the point.
    */
   function addDebugPoint(latLng, color) {
-    color = color || 'red';
+    color = color || "red";
     var debugPoint = L.circle(latLng, 500, {color: color}).addTo(map);
   }
 
