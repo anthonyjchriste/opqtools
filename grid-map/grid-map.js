@@ -337,9 +337,7 @@ var grid = (function() {
       }
 
       for(var i = 0; i < coloredLayers.length; i++) {
-        console.log(coloredLayers);
         if(feature.properties.id === coloredLayers[i].id) {
-
           layer.setStyle({fillColor: coloredLayers[i].color});
         }
       }
@@ -414,8 +412,7 @@ var grid = (function() {
     endPoint: L.latLng(16.719592, -151.853027),
     maxZoom: 18,
     minZoom: 5,
-    singleSelectionMode: false,
-    invariantColorizationMode: false,
+    singleSelectionMode: false
   };
 
   /**
@@ -452,6 +449,11 @@ var grid = (function() {
       coloredLayers = [];
     }
     coloredLayers.push({id: id, color: color});
+    onMapChange();
+  }
+
+  function clearColoredLayers() {
+    coloredLayers = [];
     onMapChange();
   }
 
