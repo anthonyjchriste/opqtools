@@ -18,7 +18,7 @@
 
   // Define what happens when a grid is clicked
   g.callbacks.onGridClick = function(feature, layer) {
-    g.colorLayer(feature, layer, 'red');
+    g.colorLayerById(feature.properties.id, "red");
   };
 
   // Initialize the map using the div 'map', centered over the island of Oahu with a zoom level of 7

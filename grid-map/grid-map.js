@@ -31,20 +31,10 @@ var grid = (function() {
   var gridLayer;
 
   /**
-   * The method which is called when a grid-square is clicked.
-   */
-  var onGridClickCallback;
-
-  /**
    * List of grid-squares that are colored before a pan so that they can be recolored after a pan.
    * @type {Array}
    */
   var coloredLayers = [];
-
-  /**
-   * The grid-square that was previously clicked.
-   */
-  var oldLayer;
 
   /**
    * Converts degrees to radians.
@@ -346,11 +336,11 @@ var grid = (function() {
         });
       }
 
-      if(config.invariantColorizationMode) {
-        for(var i = 0; i < coloredLayers.length; i++) {
-          if(coloredLayers[i][0] === feature.properties.id) {
-            layer.setStyle({fillColor: coloredLayers[i][1]});
-          }
+      for(var i = 0; i < coloredLayers.length; i++) {
+        console.log(coloredLayers);
+        if(feature.properties.id === coloredLayers[i].id) {
+
+          layer.setStyle({fillColor: coloredLayers[i].color});
         }
       }
     }
@@ -426,14 +416,14 @@ var grid = (function() {
     minZoom: 5,
     singleSelectionMode: false,
     invariantColorizationMode: false,
-    onGridClickCallback: null
   };
 
   /**
    * List of public callbacks that users can implement.
    */
   var callbacks = {
-    onGridClick: null
+    onGridClick: null,
+    onMapChange: null
   };
 
 
@@ -457,24 +447,12 @@ var grid = (function() {
     map.on("dragend", onMapChange);
   }
 
-  /**
-   * Color a grid square represented as a layer.
-   * @param feature Contains the row, column, and grid-scale information.
-   * @param layer The layer to color.
-   * @param color The color to color the layer (can specified in English (i.e. red) or as hex (i.e. #FF0000).
-   */
-  function colorLayer(feature, layer, color) {
+  function colorLayerById(id, color) {
     if(config.singleSelectionMode) {
-      if(config.invariantColorizationMode) {
-        coloredLayers = [];
-        coloredLayers.push([feature.properties.id, color]);
-      }
-      if(oldLayer) {
-        oldLayer.setStyle({fillColor: "#0033FF"});
-      }
-      oldLayer = layer;
+      coloredLayers = [];
     }
-    layer.setStyle({fillColor: color});
+    coloredLayers.push({id: id, color: color});
+    onMapChange();
   }
 
   /**
@@ -532,6 +510,7 @@ var grid = (function() {
     callbacks: callbacks,
     initMap: initMap,
     colorLayer: colorLayer,
+    colorLayerById: colorLayerById,
     addDebugPoint: addDebugPoint,
     invalidateSize: invalidateSize,
     island: island
