@@ -477,11 +477,6 @@ var grid = (function() {
     layer.setStyle({fillColor: color});
   }
 
-
-  function setOnGridClickCallback(callback) {
-    onGridClickCallback = callback;
-  }
-
   /**
    * Draws a small circle on the map which can be used in debugging.
    * @param latLng - The latitude and longitude to place the point.
@@ -537,7 +532,6 @@ var grid = (function() {
     callbacks: callbacks,
     initMap: initMap,
     colorLayer: colorLayer,
-    setOnGridClickCallback: setOnGridClickCallback,
     addDebugPoint: addDebugPoint,
     invalidateSize: invalidateSize,
     island: island
