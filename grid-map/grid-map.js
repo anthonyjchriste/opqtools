@@ -320,9 +320,15 @@ var grid = (function() {
    * Redraw the grid.
    * @param distance - The length of the side of each square in the grid.
    */
-  function updateGrid(distance) {
+  function onMapChange() {
+    var distance = getDistanceByZoom(map.getZoom());
+
     if (map.hasLayer(gridLayer)) {
       map.removeLayer(gridLayer);
+    }
+
+    if(callbacks.onMapChange) {
+      callbacks.onMapChange();
     }
 
     function onEachFeature(feature, layer) {
@@ -351,13 +357,7 @@ var grid = (function() {
     }).addTo(map);
   }
 
-  /**
-   * Get the current zoom level and update the grid.
-   */
-  function onMapChange() {
-    var zoom = map.getZoom();
-    updateGrid(getDistanceByZoom(zoom));
-  }
+
 
   /**
    * Return the distance between points in the grid based on the zoom level of the map.
@@ -438,13 +438,18 @@ var grid = (function() {
     map.addLayer(osm);
 
     map.setView(center, zoom);
-    updateGrid(getDistanceByZoom(zoom));
+    onMapChange(getDistanceByZoom(zoom));
 
     map.on("zoomend", onMapChange);
     map.on("dragend", onMapChange);
   }
 
-  function colorLayerById(id, color) {
+  /**
+   * Color a grid square by its given id.
+   * @param id Id of the grid-square to color.
+   * @param color The color to color the grid-square (in english (red) or hex (#FF0000)).
+   */
+  function colorSquareById(id, color) {
     if(config.singleSelectionMode) {
       coloredLayers = [];
     }
@@ -452,9 +457,19 @@ var grid = (function() {
     onMapChange();
   }
 
+  /**
+   * Clear the styling of all layers.
+   */
   function clearColoredLayers() {
     coloredLayers = [];
     onMapChange();
+  }
+
+  /**
+   * Returns a list of the visible ids currently in the bounding box of the browser.
+   */
+  function getVisibleIds() {
+
   }
 
   /**
@@ -511,8 +526,8 @@ var grid = (function() {
     config: config,
     callbacks: callbacks,
     initMap: initMap,
-    colorLayer: colorLayer,
-    colorLayerById: colorLayerById,
+    colorSquare: colorSquareById,
+    clearColoredLayers: clearColoredLayers,
     addDebugPoint: addDebugPoint,
     invalidateSize: invalidateSize,
     island: island
