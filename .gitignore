@@ -1,10 +1,16 @@
+
 grid-map/.idea/workspace.xml
 grid-map/.idea/tasks.xml
 grid-map/.idea/dictionaries/**
 grid-map/.idea/gradle.xml
 grid-map/examples/*.json
+grid-map/.idea/**
+grid-map/sandbox.iml
 
 opq-protocol/.idea/workspace.xml
 opq-protocol/.idea/tasks.xml
 opq-protocol/.idea/gradle.xml
 opq-protocol/.idea/dictionaries/**
+opq-protocol/.idea/**
+opq-ptotocol/opq-protocol.iml
+opq-protocol/out/**
