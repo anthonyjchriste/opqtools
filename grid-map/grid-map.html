@@ -10,14 +10,22 @@
 <body>
 <div id="map" style="height:800px"></div>
 <script type="text/javascript">
-  function onClick(feature, layer) {
-    g.colorLayer(feature, layer, 'red');
+  // Create a new grid object
+  var g = grid;
+
+  // Set single selection mode so that only one square can be selected at a time
+  g.config.singleSelectionMode = true;
+
+  // Define what happens when a grid is clicked
+  g.callbacks.onGridClick = function(feature, layer) {
+    g.colorSquare(feature.properties.id, "red");
+  };
+
+  g.callbacks.onMapChange = function() {
+    console.log(g.getVisibleIds());
   }
 
-  var g = grid;
-  g.setSingleSelectionMode(true);
-  //g.setInvariantColorizationMode(true);
-  g.setOnGridClickCallback(onClick);
+  // Initialize the map using the div 'map', centered over the island of Oahu with a zoom level of 7
   g.initMap("map", g.island.OAHU.latLng, 7);
 
 </script>
