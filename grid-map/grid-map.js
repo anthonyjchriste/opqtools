@@ -36,6 +36,8 @@ var grid = (function() {
    */
   var coloredLayers = [];
 
+  var visibleIds = [];
+
   /**
    * Converts degrees to radians.
    * @param degs - Degrees (as decimal)
@@ -325,6 +327,7 @@ var grid = (function() {
 
     if (map.hasLayer(gridLayer)) {
       map.removeLayer(gridLayer);
+      visibleIds = [];
     }
 
     if(callbacks.onMapChange) {
@@ -341,6 +344,8 @@ var grid = (function() {
           click: function() {callbacks.onGridClick(feature, layer);}
         });
       }
+
+      visibleIds.push(feature.properties.id);
 
       for(var i = 0; i < coloredLayers.length; i++) {
         if(feature.properties.id === coloredLayers[i].id) {
@@ -469,7 +474,7 @@ var grid = (function() {
    * Returns a list of the visible ids currently in the bounding box of the browser.
    */
   function getVisibleIds() {
-
+    return visibleIds;
   }
 
   /**
@@ -528,6 +533,7 @@ var grid = (function() {
     initMap: initMap,
     colorSquare: colorSquareById,
     clearColoredLayers: clearColoredLayers,
+    visibleIds: visibleIds,
     addDebugPoint: addDebugPoint,
     invalidateSize: invalidateSize,
     island: island
