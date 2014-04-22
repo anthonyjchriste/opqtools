@@ -107,6 +107,7 @@ var grid = (function() {
     var newLng = lng + Math.atan2(Math.sin(bear) * Math.sin(ad) * Math.cos(lat),
       Math.cos(ad) - Math.sin(lat) * Math.sin(newLat));
     return L.latLng(degs(newLat), degs(newLng));
+
   }
 
   /**
@@ -327,11 +328,9 @@ var grid = (function() {
 
     if (map.hasLayer(gridLayer)) {
       map.removeLayer(gridLayer);
-      visibleIds = [];
-    }
-
-    if(callbacks.onMapChange) {
-      callbacks.onMapChange();
+      while(visibleIds.length > 0) {
+        visibleIds.pop();
+      };
     }
 
     function onEachFeature(feature, layer) {
@@ -360,6 +359,10 @@ var grid = (function() {
     gridLayer = L.geoJson(polys, {
       onEachFeature: onEachFeature
     }).addTo(map);
+
+    if(callbacks.onMapChange) {
+      callbacks.onMapChange();
+    }
   }
 
 
@@ -471,7 +474,7 @@ var grid = (function() {
   }
 
   /**
-   * Returns a list of the visible ids currently in the bounding box of the browser.
+   *  Returns a list of the visible ids currently in the bounding box of the browser.
    */
   function getVisibleIds() {
     return visibleIds;
@@ -533,7 +536,7 @@ var grid = (function() {
     initMap: initMap,
     colorSquare: colorSquareById,
     clearColoredLayers: clearColoredLayers,
-    visibleIds: visibleIds,
+    getVisibleIds: getVisibleIds,
     addDebugPoint: addDebugPoint,
     invalidateSize: invalidateSize,
     island: island
