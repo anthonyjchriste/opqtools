@@ -319,11 +319,7 @@ var grid = (function() {
     return polys;
   }
 
-  /**
-   * Redraw the grid.
-   * @param distance - The length of the side of each square in the grid.
-   */
-  function onMapChange() {
+  function redrawMap() {
     var distance = getDistanceByZoom(map.getZoom());
 
     if (map.hasLayer(gridLayer)) {
@@ -359,6 +355,14 @@ var grid = (function() {
     gridLayer = L.geoJson(polys, {
       onEachFeature: onEachFeature
     }).addTo(map);
+  }
+
+  /**
+   * Redraw the grid.
+   * @param distance - The length of the side of each square in the grid.
+   */
+  function onMapChange() {
+    redrawMap();
 
     if(callbacks.onMapChange) {
       callbacks.onMapChange();
@@ -446,7 +450,7 @@ var grid = (function() {
     map.addLayer(osm);
 
     map.setView(center, zoom);
-    onMapChange(getDistanceByZoom(zoom));
+    onMapChange();
 
     map.on("zoomend", onMapChange);
     map.on("dragend", onMapChange);
@@ -462,7 +466,7 @@ var grid = (function() {
       coloredLayers = [];
     }
     coloredLayers.push({id: id, color: color});
-    onMapChange();
+    redrawMap();
   }
 
   /**
@@ -470,7 +474,7 @@ var grid = (function() {
    */
   function clearColoredLayers() {
     coloredLayers = [];
-    onMapChange();
+    redrawMap();
   }
 
   /**
