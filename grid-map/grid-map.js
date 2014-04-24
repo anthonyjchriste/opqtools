@@ -36,6 +36,8 @@ var grid = (function() {
    */
   var coloredLayers = [];
 
+  var popupContent = [];
+
   var visibleIds = [];
 
   /**
@@ -331,7 +333,11 @@ var grid = (function() {
 
     function onEachFeature(feature, layer) {
       if (feature.properties && feature.properties.popupContent) {
-        layer.bindPopup(feature.properties.popupContent);
+        for(var i = 0; i < popupContent.length; i++) {
+          if(popupContent[i].gridId === feature.properties.id) {
+            layer.bindPopup(popupContent[i].content);
+          }
+        }
       }
 
       if(callbacks.onGridClick) {
@@ -342,9 +348,9 @@ var grid = (function() {
 
       visibleIds.push(feature.properties.id);
 
-      for(var i = 0; i < coloredLayers.length; i++) {
-        if(feature.properties.id === coloredLayers[i].id) {
-          layer.setStyle({fillColor: coloredLayers[i].color});
+      for(var j = 0; j < coloredLayers.length; j++) {
+        if(feature.properties.id === coloredLayers[j].id) {
+          layer.setStyle({fillColor: coloredLayers[j].color});
         }
       }
     }
@@ -477,6 +483,10 @@ var grid = (function() {
     redrawMap();
   }
 
+  function addPopupContent(gridId, content) {
+    popupContent.push({gridId: gridId, content: content});
+  }
+
   /**
    *  Returns a list of the visible ids currently in the bounding box of the browser.
    */
@@ -539,6 +549,7 @@ var grid = (function() {
     callbacks: callbacks,
     initMap: initMap,
     colorSquare: colorSquareById,
+    addPopupContent: addPopupContent,
     clearColoredLayers: clearColoredLayers,
     getVisibleIds: getVisibleIds,
     addDebugPoint: addDebugPoint,
