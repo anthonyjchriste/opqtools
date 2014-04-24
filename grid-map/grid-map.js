@@ -333,7 +333,6 @@ var grid = (function() {
 
     function onEachFeature(feature, layer) {
       if (feature.properties && feature.properties.popupContent) {
-        console.log(popupContent);
         for(var i = 0; i < popupContent.length; i++) {
           if(popupContent[i].gridId === feature.properties.id) {
             layer.bindPopup(popupContent[i].content);
