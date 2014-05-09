@@ -26,6 +26,9 @@ import org.openpowerquality.protocol.exceptions.OpqPacketException;
 import javax.xml.bind.DatatypeConverter;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Provides a reference implementation of the OPQ communication protocol. Protocol details can be found at
@@ -89,11 +92,13 @@ public class OpqPacket implements Comparable<OpqPacket> {
    * Enumerates the different packet types associated with this protocol.
    */
   public enum PacketType {
-    MEASUREMENT(0, "Measurement"),
-    EVENT_FREQUENCY(1, "Frequency Event"),
-    EVENT_VOLTAGE(2, "Voltage Event"),
-    EVENT_DEVICE(3, "Device Event"),
-    PING(4, "Ping");
+    MEASUREMENT     (0, "Measurement"),
+    EVENT_FREQUENCY (1, "Frequency Event"),
+    EVENT_VOLTAGE   (2, "Voltage Event"),
+    EVENT_DEVICE    (3, "Device Event"),
+    PING            (4, "Ping"),
+    SETTING         (5, "Setting"),
+    MONITOR         (6, "Monitor");
 
     private final int val;
     private final String name;
@@ -128,10 +133,18 @@ public class OpqPacket implements Comparable<OpqPacket> {
     }
   }
 
+  public enum Setting {
+    SET_DEVICE_ID,
+    FREQUENCY_BOUNDS,
+    VOLTAGE_BOUNDS;
+  }
+
   /**
    * Packet data.
    */
   private byte[] data;
+
+  private Map<Setting, String> settingsMap;
 
   /**
    * Creates an empty packet.
@@ -540,6 +553,34 @@ public class OpqPacket implements Comparable<OpqPacket> {
     this.setPayload(measurement);
   }
 
+  public void addSetting(Setting setting, String value) {
+    settingsMap.put(setting, value);
+  }
+
+  public void setSettings() {
+    String settingsStr = "";
+    for(Setting k : settingsMap.keySet()) {
+      settingsStr += k + "," + settingsMap.get(k) + ",";
+    }
+    settingsStr = settingsStr.substring(0, settingsStr.length() - 1);
+    setPayload(settingsStr.getBytes());
+  }
+
+  private byte[] reverseByteArray(byte[] bs) {
+    byte[] result = new byte[bs.length];
+    int j = result.length - 1;
+    for(int i = 0; i < bs.length; i++) {
+      result[j--] = bs[i];
+    }
+    return result;
+  }
+
+  public void reverseBytes() {
+    for(Protocol protocol : Protocol.values()) {
+      setDataPart(protocol, reverseByteArray(getDataPart(protocol)));
+    }
+  }
+
   /**
    * Convert an array of bytes into an integer.
    *
@@ -640,5 +681,23 @@ public class OpqPacket implements Comparable<OpqPacket> {
   @Override
   public int hashCode() {
     return Arrays.hashCode(this.data);
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("Field\tValue\tData\n");
+    sb.append("header: " + this.getHeader() + " " + Arrays.toString(getDataPart(Protocol.HEADER)) + "\n");
+    sb.append("type: " + this.getType() + " " + Arrays.toString(getDataPart(Protocol.TYPE)) + "\n");
+    sb.append("seq #: " + this.getSequenceNumber() + " " + Arrays.toString(getDataPart(Protocol.SEQUENCE_NUMBER)) + "\n");
+    sb.append("device #: " + this.getDeviceId() + " " +  Arrays.toString(getDataPart(Protocol.DEVICE_ID)) + "\n");
+    sb.append("timestamp: " + this.getTimestamp() + " " +  Arrays.toString(getDataPart(Protocol.TIMESTAMP)) + "\n");
+    sb.append("bitfield: " + this.getBitfield() + " " +  Arrays.toString(getDataPart(Protocol.BITFIELD)) + "\n");
+    sb.append("payload size: " + this.getPayloadSize() + " " +  Arrays.toString(getDataPart(Protocol.PAYLOAD_SIZE)) + "\n");
+    sb.append("reserved: " + Arrays.toString(getDataPart(Protocol.RESERVED)) + "\n");
+    sb.append("checksum: " + this.getChecksum() + " " +  Arrays.toString(getDataPart(Protocol.CHECKSUM)) + "\n");
+    sb.append("payload: " + Arrays.toString(this.getPayload()) + "\n");
+
+    return sb.toString();
   }
 }
