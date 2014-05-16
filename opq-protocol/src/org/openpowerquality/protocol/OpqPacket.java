@@ -424,6 +424,21 @@ public class OpqPacket implements Comparable<OpqPacket> {
     this.setDataPart(Protocol.PAYLOAD, payload);
   }
 
+  public double[] getRawPowerData() {
+    // The first 16 bytes represent the event value and the event duration
+    int dataSize = (this.getPayloadSize() - 16) / 8;
+    byte[] payload = this.getPayload();
+    double[] rawPowerData = new double[dataSize];
+    System.out.println("payload size:" + this.getPayloadSize());
+    int i = 0;
+    for(int j = 16; j < dataSize * 8; j += 8) {
+      rawPowerData[i++] = bytesToDouble(Arrays.copyOfRange(payload, j, j + 8));
+    }
+
+    System.out.println("size of power data: " + rawPowerData.length);
+    return rawPowerData;
+  }
+
   /**
    * Returns the voltage of this measurement.
    *
@@ -433,10 +448,10 @@ public class OpqPacket implements Comparable<OpqPacket> {
     byte[] payload = this.getPayload();
     byte[] voltage = Arrays.copyOfRange(payload, 8, payload.length);
 
-    if(payload.length != 16) {
+    if(payload.length < 16) {
       throw new InvalidByteSizeException(payload.length, 16);
     }
-    if(voltage.length != 8) {
+    if(voltage.length < 8) {
       throw new InvalidByteSizeException(voltage.length, 8);
     }
 
@@ -452,10 +467,10 @@ public class OpqPacket implements Comparable<OpqPacket> {
     byte[] payload = this.getPayload();
     byte[] frequency = Arrays.copyOfRange(payload, 0, 8);
 
-    if(payload.length != 16) {
+    if(payload.length < 16) {
       throw new InvalidByteSizeException(payload.length, 16);
     }
-    if(frequency.length != 8) {
+    if(frequency.length < 8) {
       throw new InvalidByteSizeException(frequency.length, 8);
     }
 
@@ -470,10 +485,10 @@ public class OpqPacket implements Comparable<OpqPacket> {
     byte[] payload = this.getPayload();
     byte[] eventValue = Arrays.copyOfRange(payload, 0, 8);
 
-    if(payload.length != 16) {
+    if(payload.length < 16) {
       throw new InvalidByteSizeException(payload.length, 16);
     }
-    if(eventValue.length != 8) {
+    if(eventValue.length < 8) {
       throw new InvalidByteSizeException(eventValue.length, 8);
     }
 
@@ -486,12 +501,12 @@ public class OpqPacket implements Comparable<OpqPacket> {
    */
   public long getEventDuration() {
     byte[] payload = this.getPayload();
-    byte[] durationValue = Arrays.copyOfRange(payload, 8, payload.length);
+    byte[] durationValue = Arrays.copyOfRange(payload, 8, 16);
 
-    if(payload.length != 16) {
+    if(payload.length < 16) {
       throw new InvalidByteSizeException(payload.length, 16);
     }
-    if(durationValue.length != 8) {
+    if(durationValue.length < 8) {
       throw new InvalidByteSizeException(durationValue.length, 8);
     }
 
@@ -513,10 +528,10 @@ public class OpqPacket implements Comparable<OpqPacket> {
     byte[] durationData = longToBytes(duration);
     byte[] eventValue = new byte[16];
 
-    if(eventData.length != 8) {
+    if(eventData.length < 8) {
       throw new InvalidByteSizeException(eventData.length, 8);
     }
-    if(durationData.length != 8) {
+    if(durationData.length < 8) {
       throw new InvalidByteSizeException(durationData.length, 8);
     }
 
@@ -541,10 +556,10 @@ public class OpqPacket implements Comparable<OpqPacket> {
     byte[] voltageData = doubleToBytes(voltage);
     byte[] measurement = new byte[16];
 
-    if(frequencyData.length != 8) {
+    if(frequencyData.length < 8) {
       throw new InvalidByteSizeException(frequencyData.length, 8);
     }
-    if(voltageData.length != 8) {
+    if(voltageData.length < 8) {
       throw new InvalidByteSizeException(frequencyData.length, 8);
     }
 
