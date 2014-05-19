@@ -14,3 +14,7 @@ opq-protocol/.idea/dictionaries/**
 opq-protocol/.idea/**
 opq-ptotocol/opq-protocol.iml
 opq-protocol/out/**
+
+opq-itic/.idea/**
+opq-itic/flot/**
+opq-itic/*.iml
