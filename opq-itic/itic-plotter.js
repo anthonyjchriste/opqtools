@@ -75,7 +75,7 @@ var iticPlotter = (function() {
    * Top data series of ITIC curve.
    */
   var topCurve = {
-    color: "#FF0000",
+    color: "#AAAAAA",
     data: [[0.1667, 500],
       [1, 200],
       [3, 140],
@@ -93,7 +93,7 @@ var iticPlotter = (function() {
    * Bottom data series of ITIC curve.
    */
   var bottomCurve = {
-    color: "#FF0000",
+    color: "#AAAAAA",
     data: [[20, 0],
       [20, 70],
       [500, 70],
@@ -183,9 +183,9 @@ var iticPlotter = (function() {
   function addPoint(duration, percentNominalVoltage) {
     var events;
     switch(getRegionOfPoint(duration, percentNominalVoltage)) {
-      case Region.NO_INTERRUPTION: events = noInterruptionEvents.data; console.log("no int"); break;
-      case Region.PROHIBITED: events = prohibitedEvents.data; console.log("prohib"); break;
-      case Region.NO_DAMAGE: events = noDamageEvents.data; console.log("no damage"); break;
+      case Region.NO_INTERRUPTION: events = noInterruptionEvents.data; break;
+      case Region.PROHIBITED: events = prohibitedEvents.data; break;
+      case Region.NO_DAMAGE: events = noDamageEvents.data; break;
     }
 
     events.push([duration, percentNominalVoltage]);
