@@ -206,8 +206,14 @@ var iticPlotter = (function() {
    * Removes event points from the ITIC plot.
    */
   function removePoints() {
-    while(eventPoints["data"].length > 0) {
-      eventPoints["data"].pop();
+    while(noInterruptionEvents.data.length > 0) {
+      noInterruptionEvents.data.pop();
+    }
+    while(noDamageEvents.data.length > 0) {
+      noDamageEvents.data.pop();
+    }
+    while(prohibitedEvents.data.length > 0) {
+      prohibitedEvents.data.pop();
     }
   }
 
