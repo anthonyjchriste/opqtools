@@ -122,7 +122,7 @@ var iticPlotter = (function() {
       max: 500
     },
     xaxes: [{
-      axisLabel: "Duration in milliseconds"
+      axisLabel: "Duration (ms)"
     }],
     yaxes: [{
       axisLabel: "% Nominal Voltage"
