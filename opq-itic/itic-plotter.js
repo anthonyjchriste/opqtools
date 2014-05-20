@@ -110,8 +110,7 @@ var iticPlotter = (function() {
 
   /**
    * Options for overall rendering of the plot.
-   * @type {{xaxis: {min: number, transform: transform, inverseTransform: inverseTransform}, yaxis: {max: number},
-   * xaxes: {axisLabel: string}[], yaxes: {axisLabel: string}[]}}
+   * @type {{xaxis: {min: number, transform: transform, inverseTransform: inverseTransform}, yaxis: {max: number}, xaxes: {axisLabel: string}[], yaxes: {axisLabel: string}[]}}
    */
   var plotOptions = {
     xaxis: {
