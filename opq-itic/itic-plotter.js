@@ -1,17 +1,67 @@
 var iticPlotter = (function() {
   // Private API
+
+  /**
+   * Plot object
+   */
   var plot;
 
+  /**
+   * Polygon that represents the "prohibted region".
+   */
+  var upperPoly;
+
+  /**
+   * Polygon that represents the "no damage region".
+   */
+  var lowerPoly;
+
+  /**
+   * Enumeration for all regions with the ITIC curve
+   */
   var Region = Object.freeze({
     NO_INTERRUPTION: "No Interruption",
     NO_DAMAGE: "No Damage",
     PROHIBITED: "Prohibited"
   });
 
+  // PQ Event data series
   /**
-   * Data series representing PQ events.
+   * Events that are in the "no interruption" region of the ITIC curve
+   * @type {{color: string, points: {show: boolean}, lines: {show: boolean}, data: Array}}
    */
-  var eventPoints = {
+  var noInterruptionEvents = {
+    color: "#0000FF",
+    points: {
+      show: true
+    },
+    lines: {
+      show: false
+    },
+    data: []
+  };
+
+  /**
+   * Events that are in the "prohibited" region of the ITIC curve
+   * @type {{color: string, points: {show: boolean}, lines: {show: boolean}, data: Array}}
+   */
+  var prohibitedEvents = {
+    color: "#FF0000",
+    points: {
+      show: true
+    },
+    lines: {
+      show: false
+    },
+    data: []
+  };
+
+  /**
+   * Events that are in the "no damage" region of the ITIC curve
+   * @type {{color: string, points: {show: boolean}, lines: {show: boolean}, data: Array}}
+   */
+  var noDamageEvents = {
+    color: "#FF0000",
     points: {
       show: true
     },
@@ -35,6 +85,10 @@ var iticPlotter = (function() {
       [100001, 110]]
   };
 
+  // Construct the upper polygon
+  upperPoly = topCurve.data.slice(0);
+  upperPoly.push([100001, 500]);
+
   /**
    * Bottom data series of ITIC curve.
    */
@@ -50,6 +104,15 @@ var iticPlotter = (function() {
       [100001, 90]
     ]};
 
+  // Construct the lower polygon
+  lowerPoly = bottomCurve.data.slice(0);
+  lowerPoly.push([100001, 0]);
+
+  /**
+   * Options for overall rendering of the plot.
+   * @type {{xaxis: {min: number, transform: transform, inverseTransform: inverseTransform}, yaxis: {max: number},
+   * xaxes: {axisLabel: string}[], yaxes: {axisLabel: string}[]}}
+   */
   var plotOptions = {
     xaxis: {
       min: 0.01,
@@ -65,8 +128,44 @@ var iticPlotter = (function() {
     yaxes: [{
       axisLabel: "% Nominal Voltage"
     }]
-
   };
+
+  /**
+   * Uses ray casting to determine if a point is within a polygon.
+   * @param poly The polygon to test inclusion on.
+   *             this is represented as an array of points (i.e. [[x1, y1], [x2, y2], ..., [xn, yn]]).
+   * @param point An object which represents a point (i.e. {x: x1, y: y1}).
+   * @returns {boolean} True if the point lies within the polygon, false otherwise.
+   */
+  function isPointInPoly(poly, point) {
+    var c = false;
+    for(var i = -1, l = poly.length, j = l - 1; ++i < l; j = i) {
+      ((poly[i][1] <= point.y && point.y < poly[j][1]) || (poly[j][1] <= point.y && point.y < poly[i][1]))
+      && (point.x < (poly[j][0] - poly[i][0]) * (point.y - poly[i][0]) / (poly[j][0] - poly[i][1]) + poly[i][0])
+      && (c = !c);
+    }
+    return c;
+  }
+
+  /**
+   * Tests if a point lies within the "prohibited region" of the ITIC curve.
+   * @param duration Duration of the event.
+   * @param percentNominalVoltage % nominal voltage of the event.
+   * @returns {boolean} Returns true if the point lies within this region, false otherwise.
+   */
+  function isInProhibitedRegion(duration, percentNominalVoltage) {
+    return isPointInPoly(upperPoly, {x: duration, y: percentNominalVoltage});
+  }
+
+  /**
+   * Tests if a point lies within the "no damage region" of the ITIC curve.
+   * @param duration Duration of the event.
+   * @param percentNominalVoltage % nominal voltage of the event.
+   * @returns {boolean} Returns true if the point lies within this region, false otherwise.
+   */
+  function isInNoDamageRegion(duration, percentNominalVoltage) {
+    return isPointInPoly(lowerPoly, {x: duration, y: percentNominalVoltage});
+  }
 
   // Public API
   /**
@@ -74,7 +173,7 @@ var iticPlotter = (function() {
    * @param div Div to create an empty ITIC plot out of.
    */
   function init(div) {
-    plot = $.plot($(div), [topCurve, bottomCurve, eventPoints], plotOptions);
+    plot = $.plot($(div), [topCurve, bottomCurve, noInterruptionEvents, prohibitedEvents, noDamageEvents], plotOptions);
   }
 
   /**
@@ -83,7 +182,14 @@ var iticPlotter = (function() {
    * @param percentNominalVoltage The % nominal voltage of the event.
    */
   function addPoint(duration, percentNominalVoltage) {
-    eventPoints["data"].push([duration, percentNominalVoltage]);
+    var events;
+    switch(getRegionOfPoint(duration, percentNominalVoltage)) {
+      case Region.NO_INTERRUPTION: events = noInterruptionEvents.data; console.log("no int"); break;
+      case Region.PROHIBITED: events = prohibitedEvents.data; console.log("prohib"); break;
+      case Region.NO_DAMAGE: events = noDamageEvents.data; console.log("no damage"); break;
+    }
+
+    events.push([duration, percentNominalVoltage]);
   }
 
   /**
@@ -92,7 +198,7 @@ var iticPlotter = (function() {
    */
   function addPoints(points) {
     for(var i = 0; i < points.length; i++) {
-      eventPoints["data"].push(points[i]);
+      addPoint(points[i][0], points[i][1]);
     }
   }
 
@@ -109,19 +215,29 @@ var iticPlotter = (function() {
    * Redraw the ITIC plot with the current set of event points.
    */
   function update() {
-    plot.setData([topCurve, bottomCurve, eventPoints]);
+    plot.setData([topCurve, bottomCurve, noInterruptionEvents, prohibitedEvents, noDamageEvents]);
     plot.draw();
   }
 
-  function getRegionOfPoint(duration, percentNomincalVoltage) {
-    // TODO
+  /**
+   * Determines which ITIC curve region a point lies within.
+   * @param duration The duration of the event.
+   * @param percentNominalVoltage The % nominal voltage of the event.
+   * @returns {string} String enumeration of the ITIC curve region that this point resides in.
+   */
+  function getRegionOfPoint(duration, percentNominalVoltage) {
+    if(isInProhibitedRegion(duration, percentNominalVoltage)) return Region.PROHIBITED;
+    if(isInNoDamageRegion(duration, percentNominalVoltage)) return Region.NO_DAMAGE;
+    return Region.NO_INTERRUPTION;
   }
 
+  // Exports the public API
   return {
     init: init,
     addPoint: addPoint,
     addPoints: addPoints,
     removePoints: removePoints,
-    update: update
+    update: update,
+    getRegionOfPoint: getRegionOfPoint
   };
 })();
