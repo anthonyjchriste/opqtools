@@ -53,7 +53,7 @@
           $("#tooltip").html(quickTable([["Duration (ms)", x],
                                          ["Duration (c)", msToC(x).toFixed(2)],
                                          ["% nominal voltage", y],
-                                         ["+/- volts", y * 120],
+                                         ["+/- volts", (y / 100) * 120],
                                          ["ITIC Region", item.series.label]]))
                   .css({top: item.pageY+5, left: item.pageX+5})
                   .fadeIn(200);
