@@ -31,6 +31,7 @@ var iticPlotter = (function() {
    * @type {{color: string, points: {show: boolean}, lines: {show: boolean}, data: Array}}
    */
   var noInterruptionEvents = {
+    label: Region.NO_INTERRUPTION,
     color: "#0000FF",
     points: {
       show: true
@@ -46,6 +47,7 @@ var iticPlotter = (function() {
    * @type {{color: string, points: {show: boolean}, lines: {show: boolean}, data: Array}}
    */
   var prohibitedEvents = {
+    label: Region.PROHIBITED,
     color: "#FF0000",
     points: {
       show: true
@@ -61,7 +63,8 @@ var iticPlotter = (function() {
    * @type {{color: string, points: {show: boolean}, lines: {show: boolean}, data: Array}}
    */
   var noDamageEvents = {
-    color: "#FF0000",
+    label: Region.NO_DAMAGE,
+    color: "#000000",
     points: {
       show: true
     },
@@ -170,6 +173,19 @@ var iticPlotter = (function() {
    */
   function isInNoDamageRegion(duration, percentNominalVoltage) {
     return isPointInPoly(lowerPoly, {x: duration, y: percentNominalVoltage});
+  }
+
+  function formatTooltip(data) {
+    var table = "<table>";
+    for(var i = 0; i < data.length; i++) {
+      table +=
+          "<tr>" +
+            "<td>" + data[i][0] + "</td>" +
+            "<td>" + data[i][1] + "</td>" +
+          "</tr>";
+    }
+    table += "</table>";
+    return table;
   }
 
   // Public API
