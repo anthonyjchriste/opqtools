@@ -31,6 +31,7 @@ var iticPlotter = (function() {
    * @type {{color: string, points: {show: boolean}, lines: {show: boolean}, data: Array}}
    */
   var noInterruptionEvents = {
+    label: Region.NO_INTERRUPTION,
     color: "#0000FF",
     points: {
       show: true
@@ -46,6 +47,7 @@ var iticPlotter = (function() {
    * @type {{color: string, points: {show: boolean}, lines: {show: boolean}, data: Array}}
    */
   var prohibitedEvents = {
+    label: Region.PROHIBITED,
     color: "#FF0000",
     points: {
       show: true
@@ -61,7 +63,8 @@ var iticPlotter = (function() {
    * @type {{color: string, points: {show: boolean}, lines: {show: boolean}, data: Array}}
    */
   var noDamageEvents = {
-    color: "#FF0000",
+    label: Region.NO_DAMAGE,
+    color: "#00FF00",
     points: {
       show: true
     },
@@ -114,8 +117,8 @@ var iticPlotter = (function() {
    */
   var plotOptions = {
     xaxis: {
-      min: 0,
-      ticks: [[0.01667, "0.01667ms<br />(0.001c)"], [0.1667, "0.1667<br />(0.01c)"], [1, "1"], [3, "3"], [8.335, "8.335<br />(0.5c)"], [16.67, "<br>(1c)"], [20, "20"], [166.7, "166.7<br />(10c)"], [500, "500<br />(0.5s)"], [1667, "1667<br />(100c)"], [10000, "10000<br />(10s)"]],
+      min: 0.001,
+      ticks: [[0.01667, "0.01667<br />(0.001c)"], [0.1667, "0.1667<br />(0.01c)"], [1, "1"], [3, "3"], [8.335, "8.335<br />(0.5c)"], [16.67, "<br>(1c)"], [20, "20"], [166.7, "166.7<br />(10c)"], [500, "500<br />(0.5s)"], [1667, "1667<br />(100c)"], [10000, "10000<br />(10s)"]],
       transform: function(v){return Math.log(v + 0.0001);},
       inverseTransform: function(v){return Math.exp(v);}
     },
@@ -127,8 +130,13 @@ var iticPlotter = (function() {
     }],
     yaxes: [{
       axisLabel: "% Nominal Voltage"
-    }]
+    }],
+    grid: {
+      hoverable: true
+    }
   };
+
+
 
   /**
    * Uses ray casting to determine if a point is within a polygon.
@@ -237,6 +245,19 @@ var iticPlotter = (function() {
     return Region.NO_INTERRUPTION;
   }
 
+  function formatTooltip(data) {
+    var table = "<table>";
+    for(var i = 0; i < data.length; i++) {
+      table +=
+        "<tr>" +
+        "<td>" + data[i][0] + "</td>" +
+        "<td>" + data[i][1] + "</td>" +
+        "</tr>";
+    }
+    table += "</table>";
+    return table;
+  }
+
   // Exports the public API
   return {
     init: init,
@@ -244,6 +265,8 @@ var iticPlotter = (function() {
     addPoints: addPoints,
     removePoints: removePoints,
     update: update,
-    getRegionOfPoint: getRegionOfPoint
+    getRegionOfPoint: getRegionOfPoint,
+    formatTooltip: formatTooltip,
+    //tooltipCallback: tooltipCallback
   };
 })();
