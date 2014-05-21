@@ -269,7 +269,7 @@ var iticPlotter = (function() {
   }
 
   function voltageToPercentNominalVoltage(v) {
-    return (v * 100) / 120;
+    return Math.abs(((120 - v) / 120) * 100);
   }
 
   function percentNominalVoltageToVoltage(p) {
