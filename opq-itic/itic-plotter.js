@@ -16,6 +16,8 @@ var iticPlotter = (function() {
    */
   var lowerPoly;
 
+  var MS_PER_C = Object.freeze(new Object(16.67));
+
   /**
    * Enumeration for all regions with the ITIC curve
    */
@@ -258,6 +260,22 @@ var iticPlotter = (function() {
     return table;
   }
 
+  function msToC(ms) {
+    return ms / MS_PER_C;
+  }
+
+  function cToMs(c) {
+    return c * MS_PER_C;
+  }
+
+  function voltageToPercentNominalVoltage(v) {
+    return (v * 100) / 120;
+  }
+
+  function percentNominalVoltageToVoltage(p) {
+    return (p / 100) * 120.0;
+  }
+
   // Exports the public API
   return {
     init: init,
@@ -267,6 +285,10 @@ var iticPlotter = (function() {
     update: update,
     getRegionOfPoint: getRegionOfPoint,
     formatTooltip: formatTooltip,
+    msToC: msToC,
+    cToMs: cToMs,
+    percentNominalVoltageToVoltage: percentNominalVoltageToVoltage,
+    voltageToPercentNominalVoltage: voltageToPercentNominalVoltage
     //tooltipCallback: tooltipCallback
   };
 })();

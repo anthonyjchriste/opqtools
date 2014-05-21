@@ -22,10 +22,6 @@
     [100, 100]
   ]);
 
-  function msToC(ms) {
-      return ms * 16.67;
-  }
-
   $("<div id='tooltip'></div>").css({
       position: "absolute",
       display: "none",
@@ -41,9 +37,9 @@
           var percentNominalVoltage = item.datapoint[1].toFixed(2);
 
           $("#tooltip").html(p.formatTooltip([["Duration (ms)", duration],
-                                              ["Duration (c)", msToC(duration).toFixed(2)],
+                                              ["Duration (c)", p.msToC(duration).toFixed(2)],
                                               ["% nominal voltage", percentNominalVoltage],
-                                              ["+/- volts", (percentNominalVoltage / 100) * 120],
+                                              ["+/- volts", p.percentNominalVoltageToVoltage(percentNominalVoltage)],
                                               ["ITIC Region", item.series.label]]))
                   .css({top: item.pageY+5, left: item.pageX+5})
                   .fadeIn(200);
