@@ -64,7 +64,7 @@ var iticPlotter = (function() {
    */
   var noDamageEvents = {
     label: Region.NO_DAMAGE,
-    color: "#000000",
+    color: "#00FF00",
     points: {
       show: true
     },
@@ -175,19 +175,6 @@ var iticPlotter = (function() {
     return isPointInPoly(lowerPoly, {x: duration, y: percentNominalVoltage});
   }
 
-  function formatTooltip(data) {
-    var table = "<table>";
-    for(var i = 0; i < data.length; i++) {
-      table +=
-          "<tr>" +
-            "<td>" + data[i][0] + "</td>" +
-            "<td>" + data[i][1] + "</td>" +
-          "</tr>";
-    }
-    table += "</table>";
-    return table;
-  }
-
   // Public API
   /**
    * Creates an empty ITIC plot using the passed in div.
@@ -258,6 +245,19 @@ var iticPlotter = (function() {
     return Region.NO_INTERRUPTION;
   }
 
+  function formatTooltip(data) {
+    var table = "<table>";
+    for(var i = 0; i < data.length; i++) {
+      table +=
+        "<tr>" +
+        "<td>" + data[i][0] + "</td>" +
+        "<td>" + data[i][1] + "</td>" +
+        "</tr>";
+    }
+    table += "</table>";
+    return table;
+  }
+
   // Exports the public API
   return {
     init: init,
@@ -265,6 +265,8 @@ var iticPlotter = (function() {
     addPoints: addPoints,
     removePoints: removePoints,
     update: update,
-    getRegionOfPoint: getRegionOfPoint
+    getRegionOfPoint: getRegionOfPoint,
+    formatTooltip: formatTooltip,
+    //tooltipCallback: tooltipCallback
   };
 })();
