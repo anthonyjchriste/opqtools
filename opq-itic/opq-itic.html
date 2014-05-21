@@ -21,6 +21,46 @@
     [35, 50],
     [100, 100]
   ]);
+
+  function msToC(ms) {
+      return ms * 16.67;
+  }
+
+  $("<div id='tooltip'></div>").css({
+      position: "absolute",
+      display: "none",
+      border: "1px solid #fdd",
+      padding: "2px",
+      "background-color": "#fee",
+      opacity: 0.80
+  }).appendTo("body");
+
+  function quickTable(data) {
+      var table = "<table>";
+
+      for(var i = 0; i < data.length; i++) {
+          table += "<tr><td>"+ data[i][0] +"</td><td>" +data[i][1] + "</td></tr>";
+      }
+
+      return (table + "</table>")
+  }
+
+  $("#itic-plot").bind("plothover", function (event, pos, item) {
+      if (item) {
+          var x = item.datapoint[0].toFixed(2),
+              y = item.datapoint[1].toFixed(2);
+
+          $("#tooltip").html(quickTable([["Duration (ms)", x],
+                                         ["Duration (c)", msToC(x).toFixed(2)],
+                                         ["% nominal voltage", y],
+                                         ["+/- volts", y * 120]]))
+                  .css({top: item.pageY+5, left: item.pageX+5})
+                  .fadeIn(200);
+      } else {
+          $("#tooltip").hide();
+      }
+  });
+
   p.update();
 </script>
 </body>
