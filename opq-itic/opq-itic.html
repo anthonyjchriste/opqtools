@@ -39,7 +39,7 @@
           $("#tooltip").html(p.formatTooltip([["Duration (ms)", duration],
                                               ["Duration (c)", p.msToC(duration).toFixed(2)],
                                               ["% nominal voltage", percentNominalVoltage],
-                                              ["+/- volts", p.percentNominalVoltageToVoltage(percentNominalVoltage)],
+                                              ["Volts", p.percentNominalVoltageToVoltage(percentNominalVoltage)],
                                               ["ITIC Region", item.series.label]]))
                   .css({top: item.pageY+5, left: item.pageX+5})
                   .fadeIn(200);
