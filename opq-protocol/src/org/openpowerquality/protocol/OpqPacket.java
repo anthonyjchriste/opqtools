@@ -427,6 +427,11 @@ public class OpqPacket implements Comparable<OpqPacket> {
   public double[] getRawPowerData() {
     // The first 16 bytes represent the event value and the event duration
     int dataSize = (this.getPayloadSize() - 16) / 8;
+
+    if(dataSize <= 0) {
+      return new double[0];
+    }
+
     byte[] payload = this.getPayload();
     double[] rawPowerData = new double[dataSize];
     System.out.println("payload size:" + this.getPayloadSize());
@@ -437,6 +442,10 @@ public class OpqPacket implements Comparable<OpqPacket> {
 
     System.out.println("size of power data: " + rawPowerData.length);
     return rawPowerData;
+  }
+
+  public void setRawPowerData(double[] rms) {
+
   }
 
   /**
