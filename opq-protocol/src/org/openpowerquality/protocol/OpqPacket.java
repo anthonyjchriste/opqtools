@@ -8,11 +8,12 @@ public class OpqPacket {
   public Long deviceId;
   public String deviceKey;
   public Long timestamp;
+  public Long duration;
   public Integer checksum;
   public Double frequency;
   public Double voltage;
   public Integer payloadSize;
-  public byte[] payload;
+  public Double[] payload;
 
   /**
    * Enumerates the different packet types associated with this protocol.
@@ -63,6 +64,7 @@ public class OpqPacket {
                          "deviceId %s\n" +
                          "deviceKey %s\n" +
                          "timestamp %s\n" +
+                         "duration %s\n" +
                          "checksum %s\n" +
                          "frequency %s\n" +
                          "voltage %s\n" +
@@ -73,6 +75,7 @@ public class OpqPacket {
                          deviceId,
                          deviceKey,
                          timestamp,
+                         duration,
                          checksum,
                          frequency,
                          voltage,
